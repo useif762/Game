@@ -191,7 +191,8 @@ function startTimer() {
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             if (!hasAnswered) {
-                // تعديل: نستدعي دالة الإجابة الخاطئة صراحة
+                // تعديل: نستدعي دالة الإجابة الخاطئة صراحة ونقوم بتعطيل الأزرار
+                disableAnswerButtons();
                 selectAnswer(null, false);
             }
         }
@@ -200,7 +201,6 @@ function startTimer() {
 
 function selectAnswer(selectedButton, isCorrect) {
     clearInterval(timerInterval);
-    disableAnswerButtons();
 
     // يتم احتساب النقاط بناءً على حالة الإجابة
     if (isCorrect) {
