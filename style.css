@@ -313,47 +313,53 @@ h1 {
     padding-right: 15px;
 }
 
-/* تعديلات خاصة بالشاشات الصغيرة (الجوالات) */
+/* Media Queries for Mobile Screens */
 @media (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 20px 10px;
     }
 
     h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
-
+    
     .input-group {
         flex-direction: column;
-        gap: 10px;
+        gap: 15px;
     }
-
+    
     #playerNameInput {
         width: 100%;
+        font-size: 1rem;
     }
 
     #registerBtn,
     .main-btn {
         width: 100%;
-        padding: 12px 20px;
+        padding: 15px 30px;
         font-size: 1rem;
     }
-
+    
     .game-info {
         flex-direction: column;
         gap: 10px;
-    }
-
-    #question-text {
         font-size: 1.2rem;
     }
 
+    #question-text {
+        font-size: 1.4rem;
+    }
+    
     .answer-btn {
         font-size: 1rem;
+    }
+    
+    #leaderboard h2 {
+        font-size: 1.5rem;
     }
 
     #leaderboard-table th, #leaderboard-table td {
         font-size: 0.8rem;
-        padding: 10px;
+        padding: 8px;
     }
 }
