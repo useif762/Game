@@ -1,0 +1,182 @@
+[
+    {
+        "question": "ما هي عاصمة أستراليا؟",
+        "answers": [
+            { "text": "سيدني", "correct": false },
+            { "text": "ملبورن", "correct": false },
+            { "text": "كانبرا", "correct": true },
+            { "text": "بريزبان", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو أكبر محيط في العالم؟",
+        "answers": [
+            { "text": "المحيط الأطلسي", "correct": false },
+            { "text": "المحيط الهادئ", "correct": true },
+            { "text": "المحيط الهندي", "correct": false },
+            { "text": "المحيط المتجمد الشمالي", "correct": false }
+        ]
+    },
+    {
+        "question": "من هو مؤلف رواية 'مئة عام من العزلة'؟",
+        "answers": [
+            { "text": "خورخي لويس بورخيس", "correct": false },
+            { "text": "غابرييل غارسيا ماركيز", "correct": true },
+            { "text": "باولو كويلو", "correct": false },
+            { "text": "إرنست همنغواي", "correct": false }
+        ]
+    },
+    {
+        "question": "في أي مدينة يقع برج بيزا المائل؟",
+        "answers": [
+            { "text": "روما", "correct": false },
+            { "text": "البندقية", "correct": false },
+            { "text": "فلورنسا", "correct": false },
+            { "text": "بيزا", "correct": true }
+        ]
+    },
+    {
+        "question": "ما هي أكبر صحراء حارة في العالم؟",
+        "answers": [
+            { "text": "صحراء جوبي", "correct": false },
+            { "text": "الصحراء الكبرى", "correct": true },
+            { "text": "صحراء شبه الجزيرة العربية", "correct": false },
+            { "text": "صحراء أتاكاما", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو الكوكب المعروف باسم 'الكوكب الأحمر'؟",
+        "answers": [
+            { "text": "المريخ", "correct": true },
+            { "text": "الزهرة", "correct": false },
+            { "text": "المشتري", "correct": false },
+            { "text": "زحل", "correct": false }
+        ]
+    },
+    {
+        "question": "من هو مخترع المصباح الكهربائي؟",
+        "answers": [
+            { "text": "توماس إديسون", "correct": true },
+            { "text": "نيكولا تسلا", "correct": false },
+            { "text": "ألبرت أينشتاين", "correct": false },
+            { "text": "جاليليو جاليلي", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو العضو الأكبر في جسم الإنسان؟",
+        "answers": [
+            { "text": "القلب", "correct": false },
+            { "text": "الكبد", "correct": false },
+            { "text": "الجلد", "correct": true },
+            { "text": "الرئة", "correct": false }
+        ]
+    },
+    {
+        "question": "كم عدد الدول التي يمر بها نهر النيل؟",
+        "answers": [
+            { "text": "5", "correct": false },
+            { "text": "7", "correct": false },
+            { "text": "9", "correct": false },
+            { "text": "11", "correct": true }
+        ]
+    },
+    {
+        "question": "ما هي عاصمة اليابان؟",
+        "answers": [
+            { "text": "كيوتو", "correct": false },
+            { "text": "طوكيو", "correct": true },
+            { "text": "أوساكا", "correct": false },
+            { "text": "هيروشيما", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو الحيوان الأسرع على وجه الأرض؟",
+        "answers": [
+            { "text": "الفهد", "correct": true },
+            { "text": "الأسد", "correct": false },
+            { "text": "الزرافة", "correct": false },
+            { "text": "الذئب", "correct": false }
+        ]
+    },
+    {
+        "question": "من الذي رسم لوحة الموناليزا؟",
+        "answers": [
+            { "text": "فان جوخ", "correct": false },
+            { "text": "بابلو بيكاسو", "correct": false },
+            { "text": "ليوناردو دا فينشي", "correct": true },
+            { "text": "مايكل أنجلو", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هي أقدم حضارة في العالم؟",
+        "answers": [
+            { "text": "الحضارة الرومانية", "correct": false },
+            { "text": "الحضارة المصرية القديمة", "correct": true },
+            { "text": "الحضارة اليونانية", "correct": false },
+            { "text": "الحضارة الصينية", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو أكبر كوكب في المجموعة الشمسية؟",
+        "answers": [
+            { "text": "الأرض", "correct": false },
+            { "text": "المشتري", "correct": true },
+            { "text": "زحل", "correct": false },
+            { "text": "أورانوس", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو العنصر الأكثر وفرة في قشرة الأرض؟",
+        "answers": [
+            { "text": "الحديد", "correct": false },
+            { "text": "الأكسجين", "correct": true },
+            { "text": "السيليكون", "correct": false },
+            { "text": "الألومنيوم", "correct": false }
+        ]
+    },
+    {
+        "question": "من هو أول رئيس للولايات المتحدة الأمريكية؟",
+        "answers": [
+            { "text": "أبراهام لينكولن", "correct": false },
+            { "text": "جورج واشنطن", "correct": true },
+            { "text": "توماس جيفرسون", "correct": false },
+            { "text": "جون آدامز", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو أطول نهر في العالم؟",
+        "answers": [
+            { "text": "نهر الأمازون", "correct": true },
+            { "text": "نهر النيل", "correct": false },
+            { "text": "نهر اليانغتسي", "correct": false },
+            { "text": "نهر المسيسيبي", "correct": false }
+        ]
+    },
+    {
+        "question": "في أي عام تم اكتشاف الأمريكتين؟",
+        "answers": [
+            { "text": "1492", "correct": true },
+            { "text": "1512", "correct": false },
+            { "text": "1607", "correct": false },
+            { "text": "1776", "correct": false }
+        ]
+    },
+    {
+        "question": "ما هو أسرع جسم في الكون؟",
+        "answers": [
+            { "text": "الصوت", "correct": false },
+            { "text": "الضوء", "correct": true },
+            { "text": "الإلكترون", "correct": false },
+            { "text": "البروتون", "correct": false }
+        ]
+    },
+    {
+        "question": "كم عدد قارات العالم؟",
+        "answers": [
+            { "text": "5", "correct": false },
+            { "text": "6", "correct": false },
+            { "text": "7", "correct": true },
+            { "text": "8", "correct": false }
+        ]
+    }
+]

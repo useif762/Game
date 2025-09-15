@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطولة الأبطال</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loading-screen" class="screen active">
+        <div class="loader"></div>
+        <h1>جارٍ التحضير للبطولة...</h1>
+    </div>
+
+    <div id="register-screen" class="screen">
+        <div class="container">
+            <h1>سجل اسمك للانضمام</h1>
+            <p>أدخل اسمك للمشاركة في البطولة. نحن في انتظار بقية اللاعبين!</p>
+            <div class="input-group">
+                <input type="text" id="playerNameInput" placeholder="اكتب اسمك هنا..." maxlength="20">
+                <button id="registerBtn">تأكيد</button>
+            </div>
+            <p id="registration-status" class="status-message"></p>
+        </div>
+    </div>
+
+    <div id="waiting-screen" class="screen">
+        <div class="container">
+            <h1>في انتظار بقية اللاعبين...</h1>
+            <div class="loader"></div>
+            <p id="waiting-message">عدد اللاعبين الحالي: 0/4</p>
+        <div id="player-list" class="scrollable-list">
+            <h2>اللاعبون المسجلون:</h2>
+            <ul id="players-ul"></ul>
+          </div>
+            <button id="startTournamentBtn" class="main-btn hidden">ابدأ البطولة</button>
+        </div>
+    </div>
+
+    <div id="match-screen" class="screen">
+        <div class="container">
+            <h2 id="match-header">مرحباً <span id="player-one-name"></span></h2>
+            <div class="game-info">
+                <p id="timer">الوقت المتبقي: 15</p>
+                <p id="question-count">الأسئلة: 0/20</p>
+            </div>
+            <div class="question-box">
+                <p id="question-text"></p>
+                <div id="answers-container"></div>
+            </div>
+            <p id="match-result-message" class="hidden"></p>
+        </div>
+    </div>
+    
+    <div id="elimination-screen" class="screen">
+        <div class="container">
+            <h1 id="elimination-header"></h1>
+            <p id="elimination-message"></p>
+            <button id="continue-btn" class="main-btn hidden">استمر</button>
+            <button id="results-btn" class="main-btn hidden">شاهد النتائج</button>
+        </div>
+    </div>
+
+    <div id="results-screen" class="screen">
+        <div class="container">
+            <h1 id="winner-name"></h1>
+            <img src="trophy.png" alt="كأس البطولة" id="trophy-image" class="hidden">
+            <p id="final-message"></p>
+            <div id="leaderboard">
+                <h2>لوحة الشرف</h2>
+                <div id="leaderboard-table-container">
+                    <table id="leaderboard-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" type="module"></script>
+
+</body>
+</html>

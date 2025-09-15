@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #000000);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+    overflow: hidden;
+    direction: rtl;
+}
+
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 90%;
+    max-width: 800px;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+h1 {
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+#playerNameInput {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    font-size: 1.1rem;
+    width: 300px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+#playerNameInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px #ffd700;
+}
+
+#registerBtn,
+.main-btn {
+    padding: 16px 50px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #ffd700, #ffc700);
+    color: #1f1c2c;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#registerBtn:hover:not(:disabled),
+.main-btn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #ffc700, #ffd700);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+#registerBtn:disabled,
+.main-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    color: #999;
+}
+
+.loader {
+    border: 8px solid rgba(255, 255, 255, 0.3);
+    border-top: 8px solid #ffd700;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 25px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Waiting Screen Styles */
+#player-list {
+    margin-top: 30px;
+    text-align: right;
+    width: 100%;
+}
+
+#players-ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    animation: list-load 0.8s ease-out;
+}
+
+@keyframes list-load {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#players-ul li {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: background 0.3s ease;
+}
+
+#players-ul li:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Match Screen Styles */
+.game-info {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #ffd700;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.question-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#question-text {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+#answers-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.answer-btn {
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.answer-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #ffd700;
+}
+
+.answer-btn.correct {
+    background: #4caf50;
+    border-color: #4caf50;
+    animation: flashGreen 0.5s ease-in-out;
+}
+
+.answer-btn.incorrect {
+    background: #f44336;
+    border-color: #f44336;
+    animation: flashRed 0.5s ease-in-out;
+}
+
+@keyframes flashGreen {
+    0% { background: #4caf50; }
+    50% { background: #66bb6a; }
+    100% { background: #4caf50; }
+}
+@keyframes flashRed {
+    0% { background: #f44336; }
+    50% { background: #ef5350; }
+    100% { background: #f44336; }
+}
+
+/* Results Screen Styles */
+#trophy-image {
+    width: 180px;
+    height: auto;
+    margin: 20px auto;
+    animation: bounce 1s ease-in-out infinite;
+    filter: drop-shadow(0 5px 10px rgba(255, 215, 0, 0.5));
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+#leaderboard {
+    margin-top: 40px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    border-radius: 15px;
+}
+
+#leaderboard-table-container {
+    max-height: 450px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+#leaderboard-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#leaderboard-table th, #leaderboard-table td {
+    padding: 15px;
+    text-align: right;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#leaderboard-table th {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+#leaderboard-table tbody tr {
+    transition: background 0.3s ease;
+}
+
+#leaderboard-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#leaderboard-table tbody tr:first-child {
+    color: #ffd700;
+    font-weight: 700;
+}
+
+.scrollable-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
