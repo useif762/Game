@@ -1,6 +1,5 @@
 [
     {
-        "type": "quiz",
         "question": "ما هي عاصمة أستراليا؟",
         "answers": [
             { "text": "سيدني", "correct": false },
@@ -8,10 +7,9 @@
             { "text": "كانبرا", "correct": true },
             { "text": "بريزبان", "correct": false }
         ],
-        "time": 20
+        "time": 20 
     },
     {
-        "type": "quiz",
         "question": "ما هو أكبر محيط في العالم؟",
         "answers": [
             { "text": "المحيط الأطلسي", "correct": false },
@@ -22,7 +20,6 @@
         "time": 15
     },
     {
-        "type": "quiz",
         "question": "من هو مؤلف رواية 'مئة عام من العزلة'؟",
         "answers": [
             { "text": "خورخي لويس بورخيس", "correct": false },
@@ -33,7 +30,6 @@
         "time": 30
     },
     {
-        "type": "quiz",
         "question": "في أي مدينة يقع برج بيزا المائل؟",
         "answers": [
             { "text": "روما", "correct": false },
@@ -44,18 +40,6 @@
         "time": 10
     },
     {
-        "type": "ana_meen",
-        "clues": [
-            "أنا لاعب كرة قدم أرجنتيني.",
-            "فزت بكأس العالم عام 2022.",
-            "أرتدي القميص رقم 10.",
-            "ألقابي تشمل 'البرغوث'.",
-            "ألعب حالياً في نادي إنتر ميامي."
-        ],
-        "answer": "ليونيل ميسي"
-    },
-    {
-        "type": "quiz",
         "question": "ما هي أكبر صحراء حارة في العالم؟",
         "answers": [
             { "text": "صحراء جوبي", "correct": false },
@@ -66,18 +50,6 @@
         "time": 15
     },
     {
-        "type": "ana_meen",
-        "clues": [
-            "أنا قائد عسكري ومؤسس الدولة المصرية الحديثة.",
-            "توليت حكم مصر عام 1805.",
-            "قمت ببناء القناطر الخيرية.",
-            "أسست الجيش المصري الحديث.",
-            "كان لي دور كبير في معركة القرم."
-        ],
-        "answer": "محمد علي باشا"
-    },
-    {
-        "type": "quiz",
         "question": "ما هو الكوكب المعروف باسم 'الكوكب الأحمر'؟",
         "answers": [
             { "text": "المريخ", "correct": true },
@@ -88,7 +60,6 @@
         "time": 15
     },
     {
-        "type": "quiz",
         "question": "من هو مخترع المصباح الكهربائي؟",
         "answers": [
             { "text": "توماس إديسون", "correct": true },
@@ -99,18 +70,6 @@
         "time": 15
     },
     {
-        "type": "ana_meen",
-        "clues": [
-            "أنا لاعب كرة قدم برتغالي.",
-            "أنا الهداف التاريخي لريال مدريد.",
-            "فزت بجائزة الكرة الذهبية 5 مرات.",
-            "أحد ألقابي هو 'صاروخ ماديرا'.",
-            "ألعب حالياً في نادي النصر السعودي."
-        ],
-        "answer": "كريستيانو رونالدو"
-    },
-    {
-        "type": "quiz",
         "question": "ما هو العضو الأكبر في جسم الإنسان؟",
         "answers": [
             { "text": "القلب", "correct": false },
@@ -121,7 +80,6 @@
         "time": 15
     },
     {
-        "type": "quiz",
         "question": "كم عدد الدول التي يمر بها نهر النيل؟",
         "answers": [
             { "text": "5", "correct": false },
@@ -132,7 +90,6 @@
         "time": 20
     },
     {
-        "type": "quiz",
         "question": "ما هي عاصمة اليابان؟",
         "answers": [
             { "text": "كيوتو", "correct": false },
@@ -143,18 +100,6 @@
         "time": 10
     },
     {
-        "type": "ana_meen",
-        "clues": [
-            "أنا مؤسس شركة مايكروسوفت.",
-            "أنا أحد أغنى الأشخاص في العالم.",
-            "أقوم بالعديد من الأعمال الخيرية حول العالم.",
-            "أنا مهتم بمجال البرمجيات والتكنولوجيا.",
-            "اسمي الكامل هو ويليام هنري جيتس الثالث."
-        ],
-        "answer": "بيل جيتس"
-    },
-    {
-        "type": "quiz",
         "question": "ما هو الحيوان الأسرع على وجه الأرض؟",
         "answers": [
             { "text": "الفهد", "correct": true },
@@ -165,7 +110,6 @@
         "time": 10
     },
     {
-        "type": "quiz",
         "question": "من الذي رسم لوحة الموناليزا؟",
         "answers": [
             { "text": "فان جوخ", "correct": false },
@@ -176,7 +120,6 @@
         "time": 10
     },
     {
-        "type": "quiz",
         "question": "ما هي أقدم حضارة في العالم؟",
         "answers": [
             { "text": "الحضارة الرومانية", "correct": false },
@@ -187,7 +130,6 @@
         "time": 15
     },
     {
-        "type": "quiz",
         "question": "ما هو أكبر كوكب في المجموعة الشمسية؟",
         "answers": [
             { "text": "الأرض", "correct": false },
@@ -198,7 +140,6 @@
         "time": 15
     },
     {
-        "type": "quiz",
         "question": "ما هو العنصر الأكثر وفرة في قشرة الأرض؟",
         "answers": [
             { "text": "الحديد", "correct": false },
@@ -209,13 +150,52 @@
         "time": 10
     },
     {
-        "type": "quiz",
         "question": "من هو أول رئيس للولايات المتحدة الأمريكية؟",
         "answers": [
             { "text": "أبراهام لينكولن", "correct": false },
             { "text": "جورج واشنطن", "correct": true },
             { "text": "توماس جيفرسون", "correct": false },
             { "text": "جون آدامز", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "question": "ما هو أطول نهر في العالم؟",
+        "answers": [
+            { "text": "نهر الأمازون", "correct": true },
+            { "text": "نهر النيل", "correct": false },
+            { "text": "نهر اليانغتسي", "correct": false },
+            { "text": "نهر المسيسيبي", "correct": false }
+        ],
+        "time": 20
+    },
+    {
+        "question": "في أي عام تم اكتشاف الأمريكتين؟",
+        "answers": [
+            { "text": "1492", "correct": true },
+            { "text": "1512", "correct": false },
+            { "text": "1607", "correct": false },
+            { "text": "1776", "correct": false }
+        ],
+        "time": 10
+    },
+    {
+        "question": "ما هو أسرع جسم في الكون؟",
+        "answers": [
+            { "text": "الصوت", "correct": false },
+            { "text": "الضوء", "correct": true },
+            { "text": "الإلكترون", "correct": false },
+            { "text": "البروتون", "correct": false }
+        ],
+        "time": 10
+    },
+    {
+        "question": "كم عدد قارات العالم؟",
+        "answers": [
+            { "text": "5", "correct": false },
+            { "text": "6", "correct": false },
+            { "text": "7", "correct": true },
+            { "text": "8", "correct": false }
         ],
         "time": 15
     }
