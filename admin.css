@@ -6,13 +6,12 @@ body {
 }
 
 .admin-container {
-    max-width: 1200px;
+    max-width: 1400px; /* زيادة العرض على الشاشات الكبيرة */
     margin: 40px auto;
     padding: 30px;
     background: #1a1a1a;
     border-radius: 15px;
     box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
-    /* إضافة السكرول للصفحة الرئيسية */
     height: 90vh;
     overflow-y: auto;
 }
@@ -128,4 +127,13 @@ body {
     background: #333;
     color: #ccc;
     font-weight: bold;
+}
+
+/* تخطيط خاص بالشاشات الكبيرة (اللابتوب والمكتب) */
+@media (min-width: 1024px) {
+    .monitoring-section {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
+    }
 }

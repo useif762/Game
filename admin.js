@@ -43,7 +43,7 @@ onValue(matchmakingQueueRef, (snapshot) => {
     if (playerNames.length > 0) {
         playerNames.forEach(name => {
             const li = document.createElement('li');
-            li.textContent = name;
+            li.innerHTML = `${name} <button class="delete-btn" data-player-name="${name}">حذف اللاعب</button>`;
             waitingPlayersList.appendChild(li);
         });
     } else {
@@ -67,11 +67,12 @@ onValue(playersRef, (snapshot) => {
                 <td>${player.name}</td>
                 <td>${player.score || 0}</td>
                 <td>${player.status === 'finished' ? 'انتهى' : player.status === 'playing' ? 'يلعب' : 'في الانتظار'}</td>
+                <td><button class="delete-btn" data-player-name="${player.name}">حذف</button></td>
             `;
             liveLeaderboardTableBody.appendChild(row);
         });
     } else {
-        liveLeaderboardTableBody.innerHTML = '<tr><td colspan="3">لا يوجد لاعبون حالياً.</td></tr>';
+        liveLeaderboardTableBody.innerHTML = '<tr><td colspan="4">لا يوجد لاعبون حالياً.</td></tr>';
     }
 });
 
@@ -91,11 +92,28 @@ startTournamentBtn.addEventListener('click', async () => {
 resetGameBtn.addEventListener('click', async () => {
     if (confirm('هل أنت متأكد من إعادة تعيين اللعبة بالكامل؟ سيتم حذف جميع اللاعبين ونتائجهم.')) {
         startTournamentBtn.disabled = true;
-        resetGameBtn.disabled = true;
+        resetGameBtn.disabled = false; // نترك زر إعادة التعيين متاحًا
         await set(playersRef, null); // حذف كل اللاعبين
         await set(matchmakingQueueRef, null); // حذف قائمة الانتظار
         await set(gameStatusRef, 'waiting'); // إعادة حالة اللعبة إلى 'waiting'
         startTournamentBtn.disabled = false;
         resetGameBtn.disabled = false;
+    }
+});
+
+// ----------------------------------------------------
+// 3. حذف لاعب معين
+// ----------------------------------------------------
+
+document.addEventListener('click', async (e) => {
+    if (e.target && e.target.classList.contains('delete-btn')) {
+        const playerName = e.target.dataset.playerName;
+        if (confirm(`هل أنت متأكد من حذف اللاعب ${playerName}؟`)) {
+            // حذف اللاعب من قائمة اللاعبين
+            await remove(ref(database, 'players/' + playerName));
+            // حذف اللاعب من قائمة الانتظار (إذا كان موجودًا)
+            await remove(ref(database, 'matchmakingQueue/' + playerName));
+            alert(`تم حذف اللاعب ${playerName}.`);
+        }
     }
 });
