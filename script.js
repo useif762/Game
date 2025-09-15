@@ -35,8 +35,7 @@ const matchScreen = document.getElementById('match-screen');
 const resultsScreen = document.getElementById('results-screen');
 const playerNameInput = document.getElementById('playerNameInput');
 const registerBtn = document.getElementById('registerBtn');
-const waitingMessage = document.getElementById('waiting-message');
-const playersUl = document.getElementById('players-ul');
+const playersUl = document.getElementById('players-ul'); // إعادة العنصر
 const playerOneNameDisplay = document.getElementById('player-one-name');
 const timerDisplay = document.getElementById('timer');
 const questionCountDisplay = document.getElementById('question-count');
@@ -61,8 +60,8 @@ const gameStatusRef = ref(database, 'gameStatus');
 // بداية اللعبة
 document.addEventListener('DOMContentLoaded', () => {
     switchScreen(registerScreen);
-    handlePlayerListUpdate();
-    listenToGameStatus(); // استمع لأوامر لوحة التحكم
+    handlePlayerListUpdate(); // إعادة الدالة
+    listenToGameStatus();
 });
 
 // التعامل مع تسجيل اللاعب
@@ -104,7 +103,6 @@ function listenToGameStatus() {
     onValue(gameStatusRef, (snapshot) => {
         const status = snapshot.val();
         if (status === 'starting') {
-            // هذا هو الأمر الذي يرسله لك القائد من لوحة التحكم
             switchScreen(matchScreen);
             playerOneNameDisplay.textContent = playerName;
             currentQuestionIndex = 0;
@@ -113,9 +111,7 @@ function listenToGameStatus() {
             incorrectAnswersCount = 0;
             loadQuestions().then(() => startQuestion());
 
-            // بعد بدء اللعبة، نغير حالة اللاعب
             set(ref(database, 'players/' + playerName + '/status'), 'playing');
-            // ونحذف اللاعب من قائمة الانتظار
             remove(ref(database, 'matchmakingQueue/' + playerName));
         }
     });
@@ -123,7 +119,7 @@ function listenToGameStatus() {
 
 // تحديث قائمة اللاعبين في قائمة الانتظار
 function handlePlayerListUpdate() {
-    onValue(match-makingQueueRef, (snapshot) => {
+    onValue(matchmakingQueueRef, (snapshot) => {
         const queue = snapshot.val() || {};
         const playerNames = Object.keys(queue);
         playersUl.innerHTML = '';
@@ -132,7 +128,6 @@ function handlePlayerListUpdate() {
             li.textContent = name;
             playersUl.appendChild(li);
         });
-        waitingMessage.textContent = `عدد اللاعبين في قائمة الانتظار: ${playerNames.length}/2`;
     });
 }
 
