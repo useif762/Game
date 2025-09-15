@@ -27,8 +27,8 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s ease;
-    overflow-y: auto; /* تفعيل التمرير لكل شاشة */
-    padding: 20px; /* إضافة مساحة داخلية لمنع المحتوى من الالتصاق بالحواف */
+    overflow-y: auto;
+    padding: 20px;
     box-sizing: border-box;
 }
 
@@ -78,7 +78,7 @@ h1 {
     align-items: center;
     gap: 15px;
     margin-top: 30px;
-    flex-direction: row; /* تخطيط افتراضي */
+    flex-direction: row;
 }
 
 #playerNameInput {
@@ -307,7 +307,6 @@ h1 {
     font-weight: 700;
 }
 
-/* تفعيل التمرير لقائمة الانتظار */
 .scrollable-list {
     max-height: 250px;
     overflow-y: auto;

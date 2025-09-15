@@ -24,6 +24,7 @@ let incorrectAnswersCount = 0;
 let currentQuestionIndex = 0;
 let timerInterval;
 let questionSet = [];
+let hasAnswered = false;
 const TOTAL_QUESTIONS = 20;
 
 // عناصر HTML
@@ -154,6 +155,7 @@ function startQuestion() {
         return;
     }
 
+    hasAnswered = false; // إعادة ضبط الحالة لكل سؤال جديد
     const question = questionSet[currentQuestionIndex];
     questionText.textContent = question.question;
     answersContainer.innerHTML = '';
@@ -166,11 +168,18 @@ function startQuestion() {
         const button = document.createElement('button');
         button.classList.add('answer-btn');
         button.textContent = answer.text;
-        button.addEventListener('click', () => selectAnswer(button, answer.correct));
+        button.addEventListener('click', () => handleAnswerClick(button, answer.correct));
         answersContainer.appendChild(button);
     });
 
     startTimer();
+}
+
+// دالة منفصلة للتعامل مع اختيار اللاعب
+function handleAnswerClick(selectedButton, isCorrect) {
+    if (hasAnswered) return; // منع الإجابة أكثر من مرة
+    hasAnswered = true;
+    selectAnswer(selectedButton, isCorrect);
 }
 
 function startTimer() {
@@ -181,7 +190,9 @@ function startTimer() {
         timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            selectAnswer(null, false);
+            if (!hasAnswered) { // إذا لم يجب اللاعب بعد انتهاء الوقت
+                selectAnswer(null, false);
+            }
         }
     }, 1000);
 }
@@ -190,34 +201,29 @@ function selectAnswer(selectedButton, isCorrect) {
     clearInterval(timerInterval);
     disableAnswerButtons();
 
-    // إذا لم يتم اختيار زر (الوقت انتهى)، نحتسبها كإجابة خاطئة
-    if (!selectedButton) {
-        myScore += POINTS_PER_INCORRECT_ANSWER;
-        incorrectAnswersCount++;
-        matchResultMessage.textContent = "انتهى الوقت! -2 نقطة";
-    } else if (isCorrect) {
+    // يتم احتساب النقاط بناءً على حالة الإجابة
+    if (isCorrect) {
         myScore += POINTS_PER_CORRECT_ANSWER;
         correctAnswersCount++;
         matchResultMessage.textContent = "إجابة صحيحة! +3 نقاط";
     } else {
         myScore += POINTS_PER_INCORRECT_ANSWER;
         incorrectAnswersCount++;
-        matchResultMessage.textContent = "إجابة خاطئة. -2 نقطة";
+        matchResultMessage.textContent = selectedButton ? "إجابة خاطئة. -2 نقطة" : "انتهى الوقت! -2 نقطة";
     }
+
     matchResultMessage.classList.remove('hidden');
 
-    // إظهار الإجابة الصحيحة حتى لو كان الوقت قد انتهى
+    // إظهار الإجابة الصحيحة وتلوين الزر الذي تم اختياره
     const question = questionSet[currentQuestionIndex];
     document.querySelectorAll('.answer-btn').forEach(btn => {
         if (question.answers.find(a => a.correct).text === btn.textContent) {
             btn.classList.add('correct');
         }
+        if (selectedButton && selectedButton === btn) {
+            btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
     });
-
-    // تلوين الزر الذي تم اختياره فقط
-    if (selectedButton) {
-        selectedButton.classList.add(isCorrect ? 'correct' : 'incorrect');
-    }
     
     setTimeout(() => {
         currentQuestionIndex++;
@@ -252,7 +258,7 @@ async function displayResults() {
     onValue(playersRef, (snapshot) => {
         const allPlayers = snapshot.val() || {};
         
-        const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0)); // التأكد من وجود النقاط
+        const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0));
         
         const finalWinner = sortedPlayers[0] || null;
 
@@ -278,7 +284,6 @@ async function displayResults() {
             <tbody>
                 ${sortedPlayers.map((player, index) => {
                     const statusText = player.status === 'finished' ? 'انتهى' : 'في اللعب';
-                    // إضافة (0) إذا كانت القيم غير موجودة لتجنب الأخطاء
                     const score = player.score || 0;
                     const correct = player.correctAnswers || 0;
                     const incorrect = player.incorrectAnswers || 0;
