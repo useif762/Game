@@ -181,7 +181,7 @@ function startTimer() {
         timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
-            selectAnswer(null, false); // يتم احتسابها كإجابة خاطئة
+            selectAnswer(null, false);
         }
     }, 1000);
 }
@@ -190,7 +190,12 @@ function selectAnswer(selectedButton, isCorrect) {
     clearInterval(timerInterval);
     disableAnswerButtons();
 
-    if (isCorrect) {
+    // إذا لم يتم اختيار زر (الوقت انتهى)، نحتسبها كإجابة خاطئة
+    if (!selectedButton) {
+        myScore += POINTS_PER_INCORRECT_ANSWER;
+        incorrectAnswersCount++;
+        matchResultMessage.textContent = "انتهى الوقت! -2 نقطة";
+    } else if (isCorrect) {
         myScore += POINTS_PER_CORRECT_ANSWER;
         correctAnswersCount++;
         matchResultMessage.textContent = "إجابة صحيحة! +3 نقاط";
@@ -201,15 +206,18 @@ function selectAnswer(selectedButton, isCorrect) {
     }
     matchResultMessage.classList.remove('hidden');
 
-    if (selectedButton) {
-        selectedButton.classList.add(isCorrect ? 'correct' : 'incorrect');
-    }
+    // إظهار الإجابة الصحيحة حتى لو كان الوقت قد انتهى
+    const question = questionSet[currentQuestionIndex];
     document.querySelectorAll('.answer-btn').forEach(btn => {
-        const question = questionSet[currentQuestionIndex];
         if (question.answers.find(a => a.correct).text === btn.textContent) {
             btn.classList.add('correct');
         }
     });
+
+    // تلوين الزر الذي تم اختياره فقط
+    if (selectedButton) {
+        selectedButton.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
     
     setTimeout(() => {
         currentQuestionIndex++;
@@ -241,15 +249,14 @@ async function endGame() {
 async function displayResults() {
     switchScreen(resultsScreen);
 
-    // الاستماع لتحديثات جميع اللاعبين
     onValue(playersRef, (snapshot) => {
         const allPlayers = snapshot.val() || {};
         
-        const sortedPlayers = Object.values(allPlayers).sort((a, b) => b.score - a.score);
+        const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0)); // التأكد من وجود النقاط
         
         const finalWinner = sortedPlayers[0] || null;
 
-        if (finalWinner) {
+        if (finalWinner && finalWinner.score > 0) {
             winnerNameDisplay.textContent = `فاز بالبطولة: ${finalWinner.name}`;
             trophyImage.classList.remove('hidden');
         } else {
@@ -271,13 +278,17 @@ async function displayResults() {
             <tbody>
                 ${sortedPlayers.map((player, index) => {
                     const statusText = player.status === 'finished' ? 'انتهى' : 'في اللعب';
+                    // إضافة (0) إذا كانت القيم غير موجودة لتجنب الأخطاء
+                    const score = player.score || 0;
+                    const correct = player.correctAnswers || 0;
+                    const incorrect = player.incorrectAnswers || 0;
                     return `
                         <tr>
                             <td>${index + 1}</td>
                             <td>${player.name} ${player.name === playerName ? '(أنت)' : ''} ${index === 0 ? '(حامل اللقب)' : ''}</td>
-                            <td>${player.score}</td>
-                            <td>${player.correctAnswers}</td>
-                            <td>${player.incorrectAnswers}</td>
+                            <td>${score}</td>
+                            <td>${correct}</td>
+                            <td>${incorrect}</td>
                             <td>${statusText}</td>
                         </tr>
                     `;

@@ -27,6 +27,9 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s ease;
+    overflow-y: auto; /* تفعيل التمرير لكل شاشة */
+    padding: 20px; /* إضافة مساحة داخلية لمنع المحتوى من الالتصاق بالحواف */
+    box-sizing: border-box;
 }
 
 .screen.active {
@@ -75,6 +78,7 @@ h1 {
     align-items: center;
     gap: 15px;
     margin-top: 30px;
+    flex-direction: row; /* تخطيط افتراضي */
 }
 
 #playerNameInput {
@@ -182,6 +186,7 @@ h1 {
     font-size: 1.4rem;
     color: #ffd700;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    flex-direction: row;
 }
 
 .question-box {
@@ -302,9 +307,54 @@ h1 {
     font-weight: 700;
 }
 
+/* تفعيل التمرير لقائمة الانتظار */
 .scrollable-list {
     max-height: 250px;
     overflow-y: auto;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-right: 15px;
+}
+
+/* تعديلات خاصة بالشاشات الصغيرة (الجوالات) */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #playerNameInput {
+        width: 100%;
+    }
+
+    #registerBtn,
+    .main-btn {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .game-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #question-text {
+        font-size: 1.2rem;
+    }
+
+    .answer-btn {
+        font-size: 1rem;
+    }
+
+    #leaderboard-table th, #leaderboard-table td {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
 }
