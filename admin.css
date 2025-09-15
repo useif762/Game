@@ -1,0 +1,128 @@
+body {
+    background-color: #0d0d0d;
+    color: #f0f0f0;
+    font-family: 'Cairo', sans-serif;
+    direction: rtl;
+}
+
+.admin-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+}
+
+.admin-container h1 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 20px;
+}
+
+.control-section {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-btn {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #ffd700, #ffc700);
+    color: #1f1c2c;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+.admin-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.admin-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.reset-btn {
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+}
+
+.reset-btn:hover {
+    background: linear-gradient(45deg, #d32f2f, #f44336);
+}
+
+.monitoring-section {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.live-status {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.status-box {
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.count-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+.scrollable-list {
+    max-height: 250px;
+    overflow-y: auto;
+    background: #2c2c2c;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+#waitingPlayersList {
+    list-style: none;
+    padding: 0;
+}
+
+#waitingPlayersList li {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    font-size: 1.1rem;
+}
+
+#liveLeaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#liveLeaderboardTable th, #liveLeaderboardTable td {
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: right;
+}
+
+#liveLeaderboardTable th {
+    background: #333;
+    color: #ccc;
+    font-weight: bold;
+}

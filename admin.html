@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم البطولة</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css"> </head>
+<body>
+
+    <div class="admin-container">
+        <h1>لوحة تحكم البطولة</h1>
+        <p>مرحباً بالقائد. من هنا يمكنك مراقبة وإدارة اللعبة.</p>
+
+        <div class="control-section">
+            <h2>إدارة البطولة</h2>
+            <p>اضغط على "ابدأ البطولة" عندما يكون الجميع جاهزاً.</p>
+            <button id="startTournamentBtn" class="admin-btn">ابدأ البطولة</button>
+            <button id="resetGameBtn" class="admin-btn reset-btn">إعادة تعيين اللعبة</button>
+        </div>
+
+        <div class="monitoring-section">
+            <h2>مراقبة اللاعبين</h2>
+            <div class="live-status">
+                <div class="status-box">
+                    <p>عدد اللاعبين في الانتظار:</p>
+                    <span id="waitingCount" class="count-display">0</span>
+                </div>
+                <div class="status-box">
+                    <p>عدد اللاعبين في اللعب:</p>
+                    <span id="playingCount" class="count-display">0</span>
+                </div>
+            </div>
+            <div class="scrollable-list">
+                <h3>قائمة اللاعبين في الانتظار:</h3>
+                <ul id="waitingPlayersList"></ul>
+            </div>
+            <div class="scrollable-list">
+                <h3>حالة اللاعبين الحاليين:</h3>
+                <table id="liveLeaderboardTable">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>النقاط</th>
+                            <th>حالة اللاعب</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js" type="module"></script>
+</body>
+</html>
