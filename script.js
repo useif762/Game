@@ -35,7 +35,7 @@ const matchScreen = document.getElementById('match-screen');
 const resultsScreen = document.getElementById('results-screen');
 const playerNameInput = document.getElementById('playerNameInput');
 const registerBtn = document.getElementById('registerBtn');
-const playersUl = document.getElementById('players-ul'); // إعادة العنصر
+const playersUl = document.getElementById('players-ul');
 const playerOneNameDisplay = document.getElementById('player-one-name');
 const timerDisplay = document.getElementById('timer');
 const questionCountDisplay = document.getElementById('question-count');
@@ -48,7 +48,6 @@ const leaderboardTable = document.getElementById('leaderboard-table');
 const finalMessageDisplay = document.getElementById('final-message');
 
 // ثابتات اللعبة
-const TIME_PER_QUESTION = 15;
 const POINTS_PER_CORRECT_ANSWER = 3;
 const POINTS_PER_INCORRECT_ANSWER = -2;
 
@@ -60,7 +59,7 @@ const gameStatusRef = ref(database, 'gameStatus');
 // بداية اللعبة
 document.addEventListener('DOMContentLoaded', () => {
     switchScreen(registerScreen);
-    handlePlayerListUpdate(); // إعادة الدالة
+    handlePlayerListUpdate();
     listenToGameStatus();
 });
 
@@ -161,7 +160,7 @@ function startQuestion() {
         answersContainer.appendChild(button);
     });
 
-    startTimer();
+    startTimer(question.time); // نمرر الوقت الخاص بالسؤال
 }
 
 function handleAnswerClick(selectedButton, isCorrect) {
@@ -170,8 +169,7 @@ function handleAnswerClick(selectedButton, isCorrect) {
     selectAnswer(selectedButton, isCorrect);
 }
 
-function startTimer() {
-    let timeLeft = TIME_PER_QUESTION;
+function startTimer(timeLeft) { // الدالة الآن تستقبل الوقت كـ `argument`
     timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
     timerInterval = setInterval(() => {
         timeLeft--;
