@@ -97,10 +97,6 @@ registerBtn.addEventListener('click', async () => {
 
         await set(ref(database, 'matchmakingQueue/' + playerName), true);
         
-        // إعداد مراقب للحذف في حالة انقطاع الاتصال
-        onDisconnect(ref(database, 'players/' + playerName)).remove();
-        onDisconnect(ref(database, 'matchmakingQueue/' + playerName)).remove();
-
         // إعداد مراقب لحذف اللاعب من قبل الأدمن
         listenToPlayerRemoval();
 
