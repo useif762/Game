@@ -58,6 +58,7 @@ const finalMessageDisplay = document.getElementById('final-message');
 const QUIZ_POINTS_CORRECT = 3;
 const QUIZ_POINTS_INCORRECT = -2;
 const ANA_MEEN_POINTS_CORRECT = 5;
+const SPIRITUAL_POINTS_CORRECT = 5; // نقاط الأسئلة الروحانية
 
 // منطق اللعبة باستخدام Firebase
 const playersRef = ref(database, 'players');
@@ -198,13 +199,43 @@ function handlePlayerListUpdate() {
     });
 }
 
-// منطق اللعبة المشترك
+// ----------------------------------------------------
+// منطق اختيار وتحميل الأسئلة
+// ----------------------------------------------------
 async function loadQuestions() {
     const response = await fetch('questions.json');
-    const data = await response.json();
-    questionSet = data.sort(() => 0.5 - Math.random()).slice(0, TOTAL_QUESTIONS);
+    const allQuestions = await response.json();
+
+    const religiousQuizQuestions = allQuestions.filter(q => q.type === 'quiz' && q.question.includes('الكتاب المقدس') || q.question.includes('الروح القدس') || q.question.includes('المسيح') || q.question.includes('أسفار') || q.question.includes('العذراء') || q.question.includes('عقيدة') || q.question.includes('حظ'));
+    const spiritualQuestions = allQuestions.filter(q => q.type === 'spiritual');
+    const nonReligiousQuestions = allQuestions.filter(q => q.type !== 'spiritual' && !religiousQuizQuestions.includes(q));
+
+    const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 2);
+    const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 1);
+    
+    const remainingCount = TOTAL_QUESTIONS - 3;
+    const selectedOthers = selectRandomQuestions(nonReligiousQuestions, remainingCount);
+
+    questionSet = [...selectedReligiousQuiz, ...selectedSpiritual, ...selectedOthers];
+    shuffleArray(questionSet);
 }
 
+function selectRandomQuestions(arr, count) {
+    const shuffled = [...arr].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// ----------------------------------------------------
+// منطق اللعبة
+// ----------------------------------------------------
 function startQuestion() {
     if (currentQuestionIndex >= TOTAL_QUESTIONS) {
         endGame();
@@ -233,6 +264,14 @@ function startQuestion() {
         answerInput.classList.remove('hidden');
         submitBtn.classList.remove('hidden');
         startAnaMeenRound(currentQuestion);
+
+    } else if (currentQuestion.type === 'spiritual') { // إضافة منطق الأسئلة الروحانية
+        answersContainer.classList.add('hidden');
+        timerDisplay.classList.add('hidden');
+        cluesList.classList.remove('hidden');
+        answerInput.classList.remove('hidden');
+        submitBtn.classList.remove('hidden');
+        startSpiritualRound(currentQuestion);
     }
 
     questionCountDisplay.textContent = `الأسئلة: ${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
@@ -344,26 +383,38 @@ function startAnaMeenRound(question) {
     });
 }
 
-// دالة منفصلة للتعامل مع الإجابة
-function handleAnaMeenAnswer() {
-    if (hasAnswered || answerInput.value.trim() === '') return;
-    
-    const userAnswer = answerInput.value.trim();
-    const correctAnswer = questionSet[currentQuestionIndex].answer;
-    
-    let isCorrect = (userAnswer.toLowerCase() === correctAnswer.toLowerCase());
+// ----------------------------------------------------
+// منطق لعبة "الأسئلة الروحانية"
+// ----------------------------------------------------
+function startSpiritualRound(question) {
+    cluesList.innerHTML = '';
+    answerInput.value = '';
+    submitBtn.disabled = false;
+    answerInput.disabled = false;
+    questionText.textContent = "تنبيه: أنت الآن في جولة 'أسئلة روحانية' - اكتب الإجابة ثم اضغط إرسال أو اضغط Enter";
 
+    question.clues.forEach(clue => {
+        const li = document.createElement('li');
+        li.textContent = clue;
+        cluesList.appendChild(li);
+    });
+}
+
+// دالة منفصلة للتعامل مع الإجابة
+function handleAnswer(isCorrect, correctAnswer) {
+    if (hasAnswered) return;
     hasAnswered = true;
     submitBtn.disabled = true;
-    answerInput.disabled = true; // تعطيل مربع الإدخال
+    answerInput.disabled = true;
 
     if (isCorrect) {
-        myScore += ANA_MEEN_POINTS_CORRECT;
+        myScore += SPIRITUAL_POINTS_CORRECT;
         correctAnswersCount++;
         matchResultMessage.textContent = "إجابة صحيحة! +5 نقاط";
     } else {
+        myScore += QUIZ_POINTS_INCORRECT;
         incorrectAnswersCount++;
-        matchResultMessage.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${correctAnswer}`;
+        matchResultMessage.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${correctAnswer}. -2 نقطة`;
     }
 
     matchResultMessage.classList.remove('hidden');
@@ -375,14 +426,28 @@ function handleAnaMeenAnswer() {
 }
 
 // زر الإرسال
-submitBtn.addEventListener('click', handleAnaMeenAnswer);
+submitBtn.addEventListener('click', () => {
+    const currentQuestion = questionSet[currentQuestionIndex];
+    if (currentQuestion.type === 'ana_meen') {
+        handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
+    } else if (currentQuestion.type === 'spiritual') {
+        handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
+    }
+});
+
 
 // الضغط على Enter
 answerInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        handleAnaMeenAnswer();
+        const currentQuestion = questionSet[currentQuestionIndex];
+        if (currentQuestion.type === 'ana_meen') {
+            handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
+        } else if (currentQuestion.type === 'spiritual') {
+            handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
+        }
     }
 });
+
 
 // ----------------------------------------------------
 // عرض شاشة النتائج النهائية (مشترك)
