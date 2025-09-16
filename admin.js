@@ -51,7 +51,7 @@ onValue(matchmakingQueueRef, (snapshot) => {
     }
 });
 
-// مراقبة جميع اللاعبين وحالتهم
+// مراقبة جميع اللاعبين وحالتهم (تم التعديل هنا)
 onValue(playersRef, (snapshot) => {
     const allPlayers = snapshot.val() || {};
     const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0));
@@ -66,13 +66,15 @@ onValue(playersRef, (snapshot) => {
             row.innerHTML = `
                 <td>${player.name}</td>
                 <td>${player.score || 0}</td>
+                <td>${player.correctAnswers || 0}</td>
+                <td>${player.incorrectAnswers || 0}</td>
                 <td>${player.status === 'finished' ? 'انتهى' : player.status === 'playing' ? 'يلعب' : 'في الانتظار'}</td>
                 <td><button class="delete-btn" data-player-name="${player.name}">حذف</button></td>
             `;
             liveLeaderboardTableBody.appendChild(row);
         });
     } else {
-        liveLeaderboardTableBody.innerHTML = '<tr><td colspan="4">لا يوجد لاعبون حالياً.</td></tr>';
+        liveLeaderboardTableBody.innerHTML = '<tr><td colspan="6">لا يوجد لاعبون حالياً.</td></tr>';
     }
 });
 
@@ -83,7 +85,7 @@ onValue(playersRef, (snapshot) => {
 // زر "ابدأ البطولة"
 startTournamentBtn.addEventListener('click', async () => {
     const matchmakingSnapshot = await get(matchmakingQueueRef);
-    const playerCount = Object.keys(matchmakingSnapshot.val() || {}).length;
+    const playerCount = Object.keys(match-makingSnapshot.val() || {}).length;
 
     if (playerCount > 0) {
         await set(gameStatusRef, { status: 'starting', round: 1 });
