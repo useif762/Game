@@ -82,10 +82,8 @@ onValue(playersRef, (snapshot) => {
 
 // زر "ابدأ البطولة"
 startTournamentBtn.addEventListener('click', async () => {
-    // إرسال إشارة البدء فقط
     await set(gameStatusRef, { status: 'starting', round: 1 });
     startTournamentBtn.disabled = true;
-    resetGameBtn.disabled = true;
 });
 
 // زر "إعادة تعيين اللعبة"
@@ -124,7 +122,6 @@ onValue(gameStatusRef, (snapshot) => {
     const status = snapshot.val() || { status: 'waiting' };
     if (status.status === 'starting') {
         startTournamentBtn.disabled = true;
-        resetGameBtn.disabled = false;
     } else {
         startTournamentBtn.disabled = false;
         resetGameBtn.disabled = false;

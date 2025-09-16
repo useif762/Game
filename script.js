@@ -25,7 +25,7 @@ let currentQuestionIndex = 0;
 let timerInterval;
 let questionSet = [];
 let hasAnswered = false;
-const TOTAL_QUESTIONS = 20;
+const TOTAL_QUESTIONS = 15;
 
 // عناصر HTML
 const loadingScreen = document.getElementById('loading-screen');
@@ -123,7 +123,7 @@ function listenToPlayerRemoval() {
         const playerData = snapshot.val();
         // إذا كانت البيانات null، هذا يعني أنه تم حذف اللاعب
         if (playerData === null) {
-            alert('تم إعادة تعيين اللعبة من قبل القائد.');
+            alert('تم حذف حسابك من اللعبة بواسطة القائد.');
             resetGameClientSide();
         }
     });
