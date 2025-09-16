@@ -215,8 +215,8 @@ async function loadQuestions() {
     const religiousQuizQuestions = religiousQuestions.filter(q => q.type === 'quiz');
     const spiritualQuestions = religiousQuestions.filter(q => q.type === 'spiritual');
 
-    const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 3);
-    const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 2);
+    const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 2);
+    const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 1);
     
     // اختيار باقي الأسئلة من القائمة غير الدينية
     const remainingCount = TOTAL_QUESTIONS - selectedReligiousQuiz.length - selectedSpiritual.length;
@@ -473,7 +473,8 @@ async function displayResults() {
         
         const finalWinner = sortedPlayers[0] || null;
 
-        if (finalWinner && finalWinner.score > 0) {
+        // تم تعديل الشرط هنا ليعرض الفائز بغض النظر عن نقاطه
+        if (finalWinner) {
             winnerNameDisplay.textContent = `فاز بالبطولة: ${finalWinner.name}`;
             trophyImage.classList.remove('hidden');
         } else {
@@ -487,16 +488,22 @@ async function displayResults() {
                     <th>الترتيب</th>
                     <th>اسم اللاعب</th>
                     <th>النقاط</th>
+                    <th>الإجابات الصحيحة</th>
+                    <th>الإجابات الخاطئة</th>
                 </tr>
             </thead>
             <tbody>
                 ${sortedPlayers.map((player, index) => {
                     const score = player.score || 0;
+                    const correct = player.correctAnswers || 0;
+                    const incorrect = player.incorrectAnswers || 0;
                     return `
                         <tr>
                             <td>${index + 1}</td>
                             <td>${player.name} ${player.name === playerName ? '(أنت)' : ''} ${index === 0 ? '(حامل اللقب)' : ''}</td>
                             <td>${score}</td>
+                            <td>${correct}</td>
+                            <td>${incorrect}</td>
                         </tr>
                     `;
                 }).join('')}
@@ -509,5 +516,5 @@ async function displayResults() {
 function switchScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     screen.classList.add('active');
-
-}
+                       }
+        
