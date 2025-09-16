@@ -7,11 +7,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     text-align: center;
-    overflow: hidden;
     direction: rtl;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .screen {
@@ -81,7 +83,8 @@ h1 {
     flex-direction: row;
 }
 
-#playerNameInput {
+#playerNameInput,
+#answerInput {
     padding: 15px 25px;
     border: none;
     border-radius: 30px;
@@ -93,13 +96,15 @@ h1 {
     transition: all 0.3s ease;
 }
 
-#playerNameInput:focus {
+#playerNameInput:focus,
+#answerInput:focus {
     outline: none;
     box-shadow: 0 0 0 4px #ffd700;
 }
 
 #registerBtn,
-.main-btn {
+.main-btn,
+#submitBtn {
     padding: 16px 50px;
     border: none;
     border-radius: 50px;
@@ -115,14 +120,16 @@ h1 {
 }
 
 #registerBtn:hover:not(:disabled),
-.main-btn:hover:not(:disabled) {
+.main-btn:hover:not(:disabled),
+#submitBtn:hover:not(:disabled) {
     background: linear-gradient(45deg, #ffc700, #ffd700);
     transform: translateY(-4px) scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
 }
 
 #registerBtn:disabled,
-.main-btn:disabled {
+.main-btn:disabled,
+#submitBtn:disabled {
     background: #555;
     cursor: not-allowed;
     box-shadow: none;
@@ -247,6 +254,37 @@ h1 {
     100% { background: #f44336; }
 }
 
+/* Ana Meen Specific Styles */
+#clues-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+#clues-list li {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    transition: background 0.3s ease;
+    border-right: 4px solid #ffd700;
+}
+
+#clues-list li:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#answerInput {
+    width: calc(100% - 30px);
+    margin-bottom: 20px;
+}
+
+#submitBtn {
+    width: 100%;
+}
+
+
 /* Results Screen Styles */
 #trophy-image {
     width: 180px;
@@ -316,7 +354,7 @@ h1 {
 /* Media Queries for Mobile Screens */
 @media (max-width: 768px) {
     .container {
-        padding: 20px 10px;
+        padding: 20px;
     }
 
     h1 {
@@ -328,13 +366,15 @@ h1 {
         gap: 15px;
     }
     
-    #playerNameInput {
+    #playerNameInput,
+    #answerInput {
         width: 100%;
         font-size: 1rem;
     }
 
     #registerBtn,
-    .main-btn {
+    .main-btn,
+    #submitBtn {
         width: 100%;
         padding: 15px 30px;
         font-size: 1rem;
@@ -361,5 +401,160 @@ h1 {
     #leaderboard-table th, #leaderboard-table td {
         font-size: 0.8rem;
         padding: 8px;
+    }
+    /* تعديلات إضافية لتحسين العرض على الجوال */
+    .screen {
+        justify-content: flex-start;
+        padding-top: 50px;
+    }
+    .question-box {
+        padding: 15px;
+    }
+    .main-btn {
+        margin-top: 15px;
+    }
+    #submitBtn {
+        margin-top: 15px;
+    }
+}
+
+/* Admin Panel Styles */
+.admin-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+    height: 90vh;
+    overflow-y: auto;
+}
+
+.admin-container h1 {
+    text-align: center;
+    color: #ffd700;
+    margin-bottom: 20px;
+}
+
+.control-section {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.admin-btn {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #ffd700, #ffc700);
+    color: #1f1c2c;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+.admin-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.admin-btn:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.reset-btn {
+    background: linear-gradient(45deg, #f44336, #d32f2f);
+}
+
+.reset-btn:hover {
+    background: linear-gradient(45deg, #d32f2f, #f44336);
+}
+
+.monitoring-section {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.live-status {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.status-box {
+    background: #333;
+    padding: 15px;
+    border-radius: 8px;
+    flex: 1;
+    margin: 0 10px;
+}
+
+.count-display {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd700;
+}
+
+#waitingPlayersList {
+    list-style: none;
+    padding: 0;
+}
+
+#waitingPlayersList li {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    font-size: 1.1rem;
+}
+
+#liveLeaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#liveLeaderboardTable th, #liveLeaderboardTable td {
+    padding: 12px;
+    border-bottom: 1px solid #444;
+    text-align: right;
+}
+
+#liveLeaderboardTable th {
+    background: #333;
+    color: #ccc;
+    font-weight: bold;
+}
+
+/* تنسيق زر الحذف */
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+/* تخطيط خاص بالشاشات الكبيرة (اللابتوب والمكتب) */
+@media (min-width: 1024px) {
+    .monitoring-section {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 20px;
     }
 }
