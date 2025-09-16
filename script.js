@@ -206,21 +206,36 @@ async function loadQuestions() {
     const response = await fetch('questions.json');
     const allQuestions = await response.json();
 
-    const religiousQuizQuestions = allQuestions.filter(q => q.type === 'quiz' && q.question.includes('الكتاب المقدس') || q.question.includes('الروح القدس') || q.question.includes('المسيح') || q.question.includes('أسفار') || q.question.includes('العذراء') || q.question.includes('عقيدة') || q.question.includes('حظ'));
-    const spiritualQuestions = allQuestions.filter(q => q.type === 'spiritual');
-    const nonReligiousQuestions = allQuestions.filter(q => q.type !== 'spiritual' && !religiousQuizQuestions.includes(q));
+    // فصل الأسئلة الدينية عن باقي الأسئلة
+    const religiousQuestions = allQuestions.filter(q => 
+        q.type === 'spiritual' || 
+        (q.type === 'quiz' && (q.question.includes('الروح القدس') || q.question.includes('المسيح') || q.question.includes('أسفار') || q.question.includes('العذراء') || q.question.includes('عقيدة') || q.question.includes('حظ')))
+    );
+
+    // فصل الأسئلة غير الدينية (بما فيها أسئلة أنا مين؟)
+    const nonReligiousQuestions = allQuestions.filter(q => !religiousQuestions.includes(q));
+
+    // اختيار الأسئلة الدينية الإجبارية
+    const religiousQuizQuestions = religiousQuestions.filter(q => q.type === 'quiz');
+    const spiritualQuestions = religiousQuestions.filter(q => q.type === 'spiritual');
 
     const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 2);
     const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 1);
     
-    const remainingCount = TOTAL_QUESTIONS - 3;
+    // اختيار باقي الأسئلة من القائمة غير الدينية
+    const remainingCount = TOTAL_QUESTIONS - selectedReligiousQuiz.length - selectedSpiritual.length;
     const selectedOthers = selectRandomQuestions(nonReligiousQuestions, remainingCount);
 
+    // دمج وتوزيع الأسئلة
     questionSet = [...selectedReligiousQuiz, ...selectedSpiritual, ...selectedOthers];
     shuffleArray(questionSet);
 }
 
 function selectRandomQuestions(arr, count) {
+    if (arr.length < count) {
+        console.warn('Cannot select ' + count + ' questions from a pool of ' + arr.length + '. Returning all available questions.');
+        return [...arr];
+    }
     const shuffled = [...arr].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 }
