@@ -82,8 +82,17 @@ onValue(playersRef, (snapshot) => {
 
 // زر "ابدأ البطولة"
 startTournamentBtn.addEventListener('click', async () => {
-    await set(gameStatusRef, { status: 'starting', round: 1 });
-    startTournamentBtn.disabled = true;
+    const matchmakingSnapshot = await get(matchmakingQueueRef);
+    const playerCount = Object.keys(matchmakingSnapshot.val() || {}).length;
+
+    if (playerCount > 0) {
+        await set(gameStatusRef, { status: 'starting', round: 1 });
+        startTournamentBtn.disabled = true;
+        resetGameBtn.disabled = false;
+        alert('تم إرسال إشارة بدء البطولة إلى اللاعبين.');
+    } else {
+        alert('لا يوجد لاعبون في قائمة الانتظار.');
+    }
 });
 
 // زر "إعادة تعيين اللعبة"
@@ -98,6 +107,7 @@ resetGameBtn.addEventListener('click', async () => {
         await set(gameStatusRef, { status: 'waiting', round: 0 });
         startTournamentBtn.disabled = false;
         resetGameBtn.disabled = false;
+        alert('تم إعادة تعيين اللعبة بنجاح.');
     }
 });
 
@@ -122,6 +132,7 @@ onValue(gameStatusRef, (snapshot) => {
     const status = snapshot.val() || { status: 'waiting' };
     if (status.status === 'starting') {
         startTournamentBtn.disabled = true;
+        resetGameBtn.disabled = false;
     } else {
         startTournamentBtn.disabled = false;
         resetGameBtn.disabled = false;

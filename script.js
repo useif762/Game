@@ -155,19 +155,31 @@ function resetGameClientSide() {
 function listenToGameStatus() {
     onValue(gameStatusRef, async (snapshot) => {
         const status = snapshot.val() || { status: 'waiting' };
-        if (status.status === 'starting') {
-            switchScreen(matchScreen);
-            playerOneNameDisplay.textContent = playerName;
-            currentQuestionIndex = 0;
-            myScore = 0;
-            correctAnswersCount = 0;
-            incorrectAnswersCount = 0;
-            await loadQuestions();
-            
-            startQuestion();
+        console.log('Game status changed:', status.status); // للتأكد أن الكود يعمل
 
-            set(ref(database, 'players/' + playerName + '/status'), 'playing');
-            remove(ref(database, 'matchmakingQueue/' + playerName));
+        if (status.status === 'starting') {
+            if (playerName) { // تأكد أن اللاعب مسجل قبل بدء اللعب
+                switchScreen(matchScreen);
+                playerOneNameDisplay.textContent = playerName;
+                currentQuestionIndex = 0;
+                myScore = 0;
+                correctAnswersCount = 0;
+                incorrectAnswersCount = 0;
+                await loadQuestions();
+                
+                startQuestion();
+    
+                set(ref(database, 'players/' + playerName + '/status'), 'playing');
+                remove(ref(database, 'matchmakingQueue/' + playerName));
+            } else {
+                 // إذا لم يكن مسجلاً، أعده إلى شاشة التسجيل
+                 switchScreen(registerScreen);
+            }
+        } else if (status.status === 'waiting' && playerName) {
+            // إذا تم إعادة تعيين اللعبة من قبل المشرف
+            alert('تم إعادة تعيين اللعبة من قبل القائد، يرجى التسجيل مرة أخرى.');
+            resetGameClientSide();
+            window.location.reload();
         }
     });
 }
@@ -322,7 +334,8 @@ function startAnaMeenRound(question) {
     cluesList.innerHTML = '';
     answerInput.value = '';
     submitBtn.disabled = false;
-    questionText.textContent = "تنبيه: أنت الآن في جولة 'أنا مين؟' - اكتب الإجابة ثم اضغط إرسال";
+    answerInput.disabled = false; // تفعيل مربع الإدخال
+    questionText.textContent = "تنبيه: أنت الآن في جولة 'أنا مين؟' - اكتب الإجابة ثم اضغط إرسال أو اضغط Enter";
 
     question.clues.forEach(clue => {
         const li = document.createElement('li');
@@ -331,8 +344,9 @@ function startAnaMeenRound(question) {
     });
 }
 
-submitBtn.addEventListener('click', () => {
-    if (hasAnswered) return;
+// دالة منفصلة للتعامل مع الإجابة
+function handleAnaMeenAnswer() {
+    if (hasAnswered || answerInput.value.trim() === '') return;
     
     const userAnswer = answerInput.value.trim();
     const correctAnswer = questionSet[currentQuestionIndex].answer;
@@ -341,6 +355,7 @@ submitBtn.addEventListener('click', () => {
 
     hasAnswered = true;
     submitBtn.disabled = true;
+    answerInput.disabled = true; // تعطيل مربع الإدخال
 
     if (isCorrect) {
         myScore += ANA_MEEN_POINTS_CORRECT;
@@ -357,6 +372,16 @@ submitBtn.addEventListener('click', () => {
         currentQuestionIndex++;
         startQuestion();
     }, 2000);
+}
+
+// زر الإرسال
+submitBtn.addEventListener('click', handleAnaMeenAnswer);
+
+// الضغط على Enter
+answerInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        handleAnaMeenAnswer();
+    }
 });
 
 // ----------------------------------------------------
