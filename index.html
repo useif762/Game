@@ -42,11 +42,15 @@
             <h2 id="match-header">مرحباً <span id="player-one-name"></span></h2>
             <div class="game-info">
                 <p id="timer">الوقت المتبقي: 15</p>
-                <p id="question-count">الأسئلة: 0/20</p>
+                <p id="question-count">الأسئلة: 0/15</p>
             </div>
             <div class="question-box">
                 <p id="question-text"></p>
                 <div id="answers-container"></div>
+                
+                <ul id="clues-list" class="hidden"></ul>
+                <input type="text" id="answerInput" placeholder="أنا مين؟" class="hidden">
+                <button id="submitBtn" class="hidden">إرسال الإجابة</button>
             </div>
             <p id="match-result-message" class="hidden"></p>
         </div>
@@ -76,6 +80,7 @@
     </div>
 
     <script src="script.js" type="module"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js" type="module"></script>
 </body>
 </html>

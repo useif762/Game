@@ -125,6 +125,8 @@ function listenToPlayerRemoval() {
         if (playerData === null) {
             alert('تم حذف حسابك من اللعبة بواسطة القائد.');
             resetGameClientSide();
+            // لإجبار إعادة التحميل وضمان مسح كل البيانات
+            window.location.reload();
         }
     });
 }
@@ -200,22 +202,28 @@ function startQuestion() {
     hasAnswered = false;
     const currentQuestion = questionSet[currentQuestionIndex];
     
-    // إخفاء جميع عناصر الإجابة
-    answersContainer.classList.add('hidden');
-    timerDisplay.classList.add('hidden');
-    questionText.classList.add('hidden');
-    cluesList.classList.add('hidden');
-    answerInput.classList.add('hidden');
-    submitBtn.classList.add('hidden');
+    // إظهار وإخفاء العناصر حسب نوع السؤال
     matchResultMessage.classList.add('hidden');
-
-    questionCountDisplay.textContent = `الأسئلة: ${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
+    questionText.classList.remove('hidden');
 
     if (currentQuestion.type === 'quiz') {
+        answersContainer.classList.remove('hidden');
+        timerDisplay.classList.remove('hidden');
+        cluesList.classList.add('hidden');
+        answerInput.classList.add('hidden');
+        submitBtn.classList.add('hidden');
         startQuizRound(currentQuestion);
+
     } else if (currentQuestion.type === 'ana_meen') {
+        answersContainer.classList.add('hidden');
+        timerDisplay.classList.add('hidden');
+        cluesList.classList.remove('hidden');
+        answerInput.classList.remove('hidden');
+        submitBtn.classList.remove('hidden');
         startAnaMeenRound(currentQuestion);
     }
+
+    questionCountDisplay.textContent = `الأسئلة: ${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
 }
 
 async function endGame() {
@@ -234,11 +242,6 @@ async function endGame() {
 // منطق لعبة الاختيارات
 // ----------------------------------------------------
 function startQuizRound(question) {
-    // إظهار عناصر الاختيارات
-    answersContainer.classList.remove('hidden');
-    timerDisplay.classList.remove('hidden');
-    questionText.classList.remove('hidden');
-
     questionText.textContent = question.question;
     answersContainer.innerHTML = '';
     
@@ -316,14 +319,10 @@ function disableQuizButtons() {
 // منطق لعبة "أنا مين؟"
 // ----------------------------------------------------
 function startAnaMeenRound(question) {
-    // إظهار عناصر "أنا مين؟"
-    cluesList.classList.remove('hidden');
-    answerInput.classList.remove('hidden');
-    submitBtn.classList.remove('hidden');
-    
     cluesList.innerHTML = '';
     answerInput.value = '';
     submitBtn.disabled = false;
+    questionText.textContent = "تنبيه: أنت الآن في جولة 'أنا مين؟' - اكتب الإجابة ثم اضغط إرسال";
 
     question.clues.forEach(clue => {
         const li = document.createElement('li');

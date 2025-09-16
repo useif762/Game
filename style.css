@@ -7,13 +7,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* تم التعديل هنا: استخدام min-height بدلاً من height */
+    height: 100vh;
     margin: 0;
     text-align: center;
+    overflow: hidden;
     direction: rtl;
-    padding: 20px; /* إضافة مسافة داخلية لضمان عدم التصاق المحتوى بحواف الشاشة */
-    box-sizing: border-box;
-    overflow-y: auto; /* السماح بالتمرير الرأسي */
 }
 
 .screen {
@@ -318,7 +316,7 @@ h1 {
 /* Media Queries for Mobile Screens */
 @media (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 20px 10px;
     }
 
     h1 {
@@ -363,16 +361,5 @@ h1 {
     #leaderboard-table th, #leaderboard-table td {
         font-size: 0.8rem;
         padding: 8px;
-    }
-    /* تعديلات إضافية لتحسين العرض على الجوال */
-    .screen {
-        justify-content: flex-start; /* لتبدأ المحتويات من الأعلى */
-        padding-top: 50px;
-    }
-    .question-box {
-        padding: 15px;
-    }
-    .main-btn {
-        margin-top: 15px;
     }
 }

@@ -1,202 +1,364 @@
 [
     {
-        "question": "ما هي عاصمة أستراليا؟",
-        "answers": [
-            { "text": "سيدني", "correct": false },
-            { "text": "ملبورن", "correct": false },
-            { "text": "كانبرا", "correct": true },
-            { "text": "بريزبان", "correct": false }
-        ],
-        "time": 20 
-    },
-    {
-        "question": "ما هو أكبر محيط في العالم؟",
-        "answers": [
-            { "text": "المحيط الأطلسي", "correct": false },
-            { "text": "المحيط الهادئ", "correct": true },
-            { "text": "المحيط الهندي", "correct": false },
-            { "text": "المحيط المتجمد الشمالي", "correct": false }
-        ],
-        "time": 15
-    },
-    {
-        "question": "من هو مؤلف رواية 'مئة عام من العزلة'؟",
-        "answers": [
-            { "text": "خورخي لويس بورخيس", "correct": false },
-            { "text": "غابرييل غارسيا ماركيز", "correct": true },
-            { "text": "باولو كويلو", "correct": false },
-            { "text": "إرنست همنغواي", "correct": false }
-        ],
-        "time": 30
-    },
-    {
-        "question": "في أي مدينة يقع برج بيزا المائل؟",
-        "answers": [
-            { "text": "روما", "correct": false },
-            { "text": "البندقية", "correct": false },
-            { "text": "فلورنسا", "correct": false },
-            { "text": "بيزا", "correct": true }
-        ],
-        "time": 10
-    },
-    {
-        "question": "ما هي أكبر صحراء حارة في العالم؟",
-        "answers": [
-            { "text": "صحراء جوبي", "correct": false },
-            { "text": "الصحراء الكبرى", "correct": true },
-            { "text": "صحراء شبه الجزيرة العربية", "correct": false },
-            { "text": "صحراء أتاكاما", "correct": false }
-        ],
-        "time": 15
-    },
-    {
-        "question": "ما هو الكوكب المعروف باسم 'الكوكب الأحمر'؟",
-        "answers": [
-            { "text": "المريخ", "correct": true },
-            { "text": "الزهرة", "correct": false },
-            { "text": "المشتري", "correct": false },
-            { "text": "زحل", "correct": false }
-        ],
-        "time": 15
-    },
-    {
-        "question": "من هو مخترع المصباح الكهربائي؟",
-        "answers": [
-            { "text": "توماس إديسون", "correct": true },
-            { "text": "نيكولا تسلا", "correct": false },
-            { "text": "ألبرت أينشتاين", "correct": false },
-            { "text": "جاليليو جاليلي", "correct": false }
-        ],
-        "time": 15
-    },
-    {
-        "question": "ما هو العضو الأكبر في جسم الإنسان؟",
-        "answers": [
-            { "text": "القلب", "correct": false },
-            { "text": "الكبد", "correct": false },
-            { "text": "الجلد", "correct": true },
-            { "text": "الرئة", "correct": false }
-        ],
-        "time": 15
-    },
-    {
-        "question": "كم عدد الدول التي يمر بها نهر النيل؟",
-        "answers": [
-            { "text": "5", "correct": false },
-            { "text": "7", "correct": false },
-            { "text": "9", "correct": false },
-            { "text": "11", "correct": true }
-        ],
-        "time": 20
-    },
-    {
+        "type": "quiz",
         "question": "ما هي عاصمة اليابان؟",
         "answers": [
             { "text": "كيوتو", "correct": false },
-            { "text": "طوكيو", "correct": true },
+            { "text": "ناغويا", "correct": false },
             { "text": "أوساكا", "correct": false },
-            { "text": "هيروشيما", "correct": false }
-        ],
-        "time": 10
-    },
-    {
-        "question": "ما هو الحيوان الأسرع على وجه الأرض؟",
-        "answers": [
-            { "text": "الفهد", "correct": true },
-            { "text": "الأسد", "correct": false },
-            { "text": "الزرافة", "correct": false },
-            { "text": "الذئب", "correct": false }
-        ],
-        "time": 10
-    },
-    {
-        "question": "من الذي رسم لوحة الموناليزا؟",
-        "answers": [
-            { "text": "فان جوخ", "correct": false },
-            { "text": "بابلو بيكاسو", "correct": false },
-            { "text": "ليوناردو دا فينشي", "correct": true },
-            { "text": "مايكل أنجلو", "correct": false }
-        ],
-        "time": 10
-    },
-    {
-        "question": "ما هي أقدم حضارة في العالم؟",
-        "answers": [
-            { "text": "الحضارة الرومانية", "correct": false },
-            { "text": "الحضارة المصرية القديمة", "correct": true },
-            { "text": "الحضارة اليونانية", "correct": false },
-            { "text": "الحضارة الصينية", "correct": false }
+            { "text": "طوكيو", "correct": true }
         ],
         "time": 15
     },
     {
+        "type": "quiz",
         "question": "ما هو أكبر كوكب في المجموعة الشمسية؟",
         "answers": [
-            { "text": "الأرض", "correct": false },
+            { "text": "أورانوس", "correct": false },
             { "text": "المشتري", "correct": true },
             { "text": "زحل", "correct": false },
-            { "text": "أورانوس", "correct": false }
+            { "text": "نبتون", "correct": false }
         ],
         "time": 15
     },
     {
-        "question": "ما هو العنصر الأكثر وفرة في قشرة الأرض؟",
+        "type": "quiz",
+        "question": "من هو مؤسس علم الطب؟",
         "answers": [
-            { "text": "الحديد", "correct": false },
-            { "text": "الأكسجين", "correct": true },
+            { "text": "أرسطو", "correct": false },
+            { "text": "جالينوس", "correct": false },
+            { "text": "أبقراط", "correct": true },
+            { "text": "ابن سينا", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "مسلسل \"الاختيار\" الجزء الأول كان عن أي شخصية؟",
+        "answers": [
+            { "text": "مروان حامد", "correct": false },
+            { "text": "أحمد المنسي", "correct": true },
+            { "text": "هشام عشماوي", "correct": false },
+            { "text": "سيف الدين حسين", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ما هو الحيوان الوحيد الذي لا يستطيع القفز؟",
+        "answers": [
+            { "text": "الزرافة", "correct": false },
+            { "text": "الحوت", "correct": false },
+            { "text": "الفيل", "correct": true },
+            { "text": "فرس النهر", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "في مسلسل لن أعيش في جلباب أبي، ما اسم الشخصية التي جسدها نور الشريف؟",
+        "answers": [
+            { "text": "الحاج رمضان", "correct": false },
+            { "text": "عبد العظيم الشناوي", "correct": false },
+            { "text": "عبد الغفور البرعي", "correct": true },
+            { "text": "حافظ البرعي", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ما هو العنصر الأخف وزناً في الجدول الدوري؟",
+        "answers": [
+            { "text": "هيليوم", "correct": false },
+            { "text": "هيدروجين", "correct": true },
+            { "text": "نيون", "correct": false },
+            { "text": "ليثيوم", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "في أي عام تم بناء برج إيفل في باريس؟",
+        "answers": [
+            { "text": "1910", "correct": false },
+            { "text": "1889", "correct": true },
+            { "text": "1895", "correct": false },
+            { "text": "1901", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ما هو أصغر كوكب في المجموعة الشمسية؟",
+        "answers": [
+            { "text": "المريخ", "correct": false },
+            { "text": "عطارد", "correct": true },
+            { "text": "بلوتو", "correct": false },
+            { "text": "الزهرة", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "في أي عام بدأت الحرب العالمية الثانية؟",
+        "answers": [
+            { "text": "1945", "correct": false },
+            { "text": "1914", "correct": false },
+            { "text": "1939", "correct": true },
+            { "text": "1950", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ما هو أكبر محيط في العالم؟",
+        "answers": [
+            { "text": "الأطلسي", "correct": false },
+            { "text": "المتجمد الشمالي", "correct": false },
+            { "text": "الهندي", "correct": false },
+            { "text": "الهادئ", "correct": true }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "في أي عام صدر أول جزء من سلسلة أفلام هاري بوتر؟",
+        "answers": [
+            { "text": "2005", "correct": false },
+            { "text": "2001", "correct": true },
+            { "text": "1999", "correct": false },
+            { "text": "2003", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "من هو مخترع الهاتف؟",
+        "answers": [
+            { "text": "توماس إديسون", "correct": false },
+            { "text": "نيكولا تسلا", "correct": false },
+            { "text": "جراهام بيل", "correct": true },
+            { "text": "مايكل فاراداي", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "مين قال الأفيه 'اللي بيأكل لوحده يزور'؟",
+        "answers": [
+            { "text": "خالد الصاوي", "correct": false },
+            { "text": "حسن حسني", "correct": false },
+            { "text": "أحمد حلمي", "correct": true },
+            { "text": "دنيا سمير غانم", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "فيلم لف ودوران: مين قال 'أنا مش رايح شرم أنا رايح أصيف في كفر البطيخ'؟",
+        "answers": [
+            { "text": "صابرين", "correct": false },
+            { "text": "دنيا سمير غانم", "correct": false },
+            { "text": "أحمد حلمي", "correct": true },
+            { "text": "بيومي فؤاد", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "فيلم ولاد رزق الجزء الأول: مين قال 'إحنا ولاد رزق .. ومالناش أمان'؟",
+        "answers": [
+            { "text": "عمرو يوسف", "correct": false },
+            { "text": "كريم قاسم", "correct": false },
+            { "text": "أحمد عز", "correct": true },
+            { "text": "أحمد داوود", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "أين يقع تمثال الحرية؟",
+        "answers": [
+            { "text": "بوسطن", "correct": false },
+            { "text": "نيويورك", "correct": true },
+            { "text": "شيكاغو", "correct": false },
+            { "text": "واشنطن", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "أي من الكواكب يُعرف بالكوكب الأحمر؟",
+        "answers": [
+            { "text": "زحل", "correct": false },
+            { "text": "الزهرة", "correct": false },
+            { "text": "المريخ", "correct": true },
+            { "text": "عطارد", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "أين يقع برج بيزا المائل؟",
+        "answers": [
+            { "text": "إسبانيا", "correct": false },
+            { "text": "إيطاليا", "correct": true },
+            { "text": "سويسرا", "correct": false },
+            { "text": "فرنسا", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "من قال \"من النهاردة مفيش حكومة .. أنا الحكومة\"؟",
+        "answers": [
+            { "text": "محمود ياسين", "correct": false },
+            { "text": "أحمد السقا", "correct": true },
+            { "text": "عمرو عبد الجليل", "correct": false },
+            { "text": "خالد الصاوي", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ما هي أكبر دولة عربية من حيث المساحة؟",
+        "answers": [
+            { "text": "السودان", "correct": false },
+            { "text": "السعودية", "correct": false },
+            { "text": "الجزائر", "correct": true },
+            { "text": "مصر", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "فيلم الفيل الأزرق 2: مين الممثلة اللي جسدت شخصية \"فريدة\" المصابة بالمس الشيطاني؟",
+        "answers": [
+            { "text": "غادة عادل", "correct": false },
+            { "text": "هند صبري", "correct": true },
+            { "text": "نيللي كريم", "correct": false },
+            { "text": "شيرين رضا", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "في مسلسل \"جعفر العمدة\"، إيه كانت مهنة جعفر؟",
+        "answers": [
+            { "text": "محامي", "correct": false },
+            { "text": "تاجر ذهب", "correct": true },
+            { "text": "دكتور", "correct": false },
+            { "text": "مقاول", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "في فيلم \"كيرة والجن\"، الأحداث بتدور في أي فترة تاريخية؟",
+        "answers": [
+            { "text": "حرب 1973", "correct": false },
+            { "text": "العصور المملوكية", "correct": false },
+            { "text": "ثورة 1919", "correct": true },
+            { "text": "الحرب العالمية الأولى", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "أي دولة يُطلق عليها \"بلاد الشام\" تاريخياً؟",
+        "answers": [
+            { "text": "تركيا", "correct": false },
+            { "text": "سوريا", "correct": true },
+            { "text": "العراق", "correct": false },
+            { "text": "مصر", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ما هو العنصر الأكثر وفرة في القشرة الأرضية؟",
+        "answers": [
+            { "text": "الكالسيوم", "correct": false },
             { "text": "السيليكون", "correct": false },
-            { "text": "الألومنيوم", "correct": false }
-        ],
-        "time": 10
-    },
-    {
-        "question": "من هو أول رئيس للولايات المتحدة الأمريكية؟",
-        "answers": [
-            { "text": "أبراهام لينكولن", "correct": false },
-            { "text": "جورج واشنطن", "correct": true },
-            { "text": "توماس جيفرسون", "correct": false },
-            { "text": "جون آدامز", "correct": false }
+            { "text": "الأكسجين", "correct": true },
+            { "text": "الحديد", "correct": false }
         ],
         "time": 15
     },
     {
-        "question": "ما هو أطول نهر في العالم؟",
+        "type": "quiz",
+        "question": "ما هي أسرع الطيور في العالم؟",
         "answers": [
-            { "text": "نهر الأمازون", "correct": true },
-            { "text": "نهر النيل", "correct": false },
-            { "text": "نهر اليانغتسي", "correct": false },
-            { "text": "نهر المسيسيبي", "correct": false }
+            { "text": "العقاب", "correct": false },
+            { "text": "النسر", "correct": false },
+            { "text": "الشاهين", "correct": true },
+            { "text": "الحمام الزاجل", "correct": false }
         ],
-        "time": 20
+        "time": 15
     },
     {
-        "question": "في أي عام تم اكتشاف الأمريكتين؟",
+        "type": "quiz",
+        "question": "من هو أول مصري يحصل على جائزة نوبل؟",
         "answers": [
-            { "text": "1492", "correct": true },
-            { "text": "1512", "correct": false },
-            { "text": "1607", "correct": false },
-            { "text": "1776", "correct": false }
+            { "text": "نجيب محفوظ", "correct": true },
+            { "text": "أحمد زويل", "correct": false },
+            { "text": "محمد البرادعي", "correct": false },
+            { "text": "أنور السادات", "correct": false }
         ],
-        "time": 10
+        "time": 15
     },
     {
-        "question": "ما هو أسرع جسم في الكون؟",
+        "type": "quiz",
+        "question": "ناتج $5 + 8 - 3$ هو؟",
         "answers": [
-            { "text": "الصوت", "correct": false },
-            { "text": "الضوء", "correct": true },
-            { "text": "الإلكترون", "correct": false },
-            { "text": "البروتون", "correct": false }
-        ],
-        "time": 10
-    },
-    {
-        "question": "كم عدد قارات العالم؟",
-        "answers": [
+            { "text": "10", "correct": true },
+            { "text": "16", "correct": false },
             { "text": "5", "correct": false },
-            { "text": "6", "correct": false },
-            { "text": "7", "correct": true },
-            { "text": "8", "correct": false }
+            { "text": "11", "correct": false }
         ],
         "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ناتج $9 \times 3$ هو؟",
+        "answers": [
+            { "text": "18", "correct": false },
+            { "text": "27", "correct": true },
+            { "text": "12", "correct": false },
+            { "text": "21", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "quiz",
+        "question": "ناتج قسمة 100 على 5 هو؟",
+        "answers": [
+            { "text": "20", "correct": true },
+            { "text": "50", "correct": false },
+            { "text": "10", "correct": false },
+            { "text": "5", "correct": false }
+        ],
+        "time": 15
+    },
+    {
+        "type": "ana_meen",
+        "clues": [
+            "أنا ممثل مصري اتلقبت بـ \"النمر الأسود\"، ومثلت أفلام زي \"البريء\" و\"زوجة رجل مهم\"."
+        ],
+        "answer": "أحمد زكي"
+    },
+    {
+        "type": "ana_meen",
+        "clues": [
+            "أنا كاتب وروائي مصري، حصلت على جائزة نوبل في الأدب عام 1988. من أشهر أعمالي \"الثلاثية\"."
+        ],
+        "answer": "نجيب محفوظ"
+    },
+    {
+        "type": "ana_meen",
+        "clues": [
+            "أنا شخصية كرتونية شهيرة، ألبس قفازات بيضاء، وصديقي المقرب هو كلب اسمه بلوتو."
+        ],
+        "answer": "ميكي ماوس"
     }
 ]
