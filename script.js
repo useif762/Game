@@ -1,6 +1,6 @@
 // استيراد مكتبات Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getDatabase, ref, onValue, set, get, remove, runTransaction, onDisconnect } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+import { getDatabase, ref, onValue, set, get, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
 // إعدادات Firebase
 const firebaseConfig = {
@@ -37,24 +37,35 @@ const playerNameInput = document.getElementById('playerNameInput');
 const registerBtn = document.getElementById('registerBtn');
 const playersUl = document.getElementById('players-ul');
 const playerOneNameDisplay = document.getElementById('player-one-name');
+
+// عناصر واجهة اللعبة
 const timerDisplay = document.getElementById('timer');
 const questionCountDisplay = document.getElementById('question-count');
 const questionText = document.getElementById('question-text');
 const answersContainer = document.getElementById('answers-container');
 const matchResultMessage = document.getElementById('match-result-message');
+const cluesList = document.getElementById('clues-list');
+const answerInput = document.getElementById('answerInput');
+const submitBtn = document.getElementById('submitBtn');
+
+// عناصر النتائج المشتركة
 const winnerNameDisplay = document.getElementById('winner-name');
 const trophyImage = document.getElementById('trophy-image');
 const leaderboardTable = document.getElementById('leaderboard-table');
 const finalMessageDisplay = document.getElementById('final-message');
 
 // ثابتات اللعبة
-const POINTS_PER_CORRECT_ANSWER = 3;
-const POINTS_PER_INCORRECT_ANSWER = -2;
+const QUIZ_POINTS_CORRECT = 3;
+const QUIZ_POINTS_INCORRECT = -2;
+const ANA_MEEN_POINTS_CORRECT = 5;
 
 // منطق اللعبة باستخدام Firebase
 const playersRef = ref(database, 'players');
 const matchmakingQueueRef = ref(database, 'matchmakingQueue');
 const gameStatusRef = ref(database, 'gameStatus');
+
+// متغير لتخزين مرجع مراقب اللاعب
+let playerRemovalListener = null;
 
 // بداية اللعبة
 document.addEventListener('DOMContentLoaded', () => {
@@ -80,15 +91,17 @@ registerBtn.addEventListener('click', async () => {
         await set(ref(database, 'players/' + playerName), {
             name: playerName,
             score: 0,
-            correctAnswers: 0,
-            incorrectAnswers: 0,
             status: 'waiting'
         });
 
         await set(ref(database, 'matchmakingQueue/' + playerName), true);
         
+        // إعداد مراقب للحذف في حالة انقطاع الاتصال
         onDisconnect(ref(database, 'players/' + playerName)).remove();
         onDisconnect(ref(database, 'matchmakingQueue/' + playerName)).remove();
+
+        // إعداد مراقب لحذف اللاعب من قبل الأدمن
+        listenToPlayerRemoval();
 
         switchScreen(waitingScreen);
         registerBtn.disabled = false;
@@ -97,18 +110,59 @@ registerBtn.addEventListener('click', async () => {
     }
 });
 
-// دالة جديدة للاستماع لأوامر لوحة التحكم
+// دالة لمراقبة بيانات اللاعب الخاصة
+function listenToPlayerRemoval() {
+    // إزالة المراقب القديم إذا كان موجوداً
+    if (playerRemovalListener) {
+        playerRemovalListener();
+    }
+    
+    // إعداد مراقب جديد على بيانات اللاعب الحالية
+    const playerNodeRef = ref(database, 'players/' + playerName);
+    playerRemovalListener = onValue(playerNodeRef, (snapshot) => {
+        const playerData = snapshot.val();
+        // إذا كانت البيانات null، هذا يعني أنه تم حذف اللاعب
+        if (playerData === null) {
+            alert('تم إعادة تعيين اللعبة من قبل القائد.');
+            resetGameClientSide();
+        }
+    });
+}
+
+// دالة لتصفير بيانات اللعبة في المتصفح وإعادة التوجيه
+function resetGameClientSide() {
+    clearInterval(timerInterval);
+    playerName = '';
+    myScore = 0;
+    currentQuestionIndex = 0;
+    correctAnswersCount = 0;
+    incorrectAnswersCount = 0;
+    questionSet = [];
+    hasAnswered = false;
+    
+    // إزالة المراقب الخاص باللاعب الحالي لمنع تفعيله مرة أخرى
+    if (playerRemovalListener) {
+        playerRemovalListener();
+        playerRemovalListener = null;
+    }
+    
+    switchScreen(registerScreen);
+}
+
+// دالة للاستماع لأوامر لوحة التحكم
 function listenToGameStatus() {
-    onValue(gameStatusRef, (snapshot) => {
-        const status = snapshot.val();
-        if (status === 'starting') {
+    onValue(gameStatusRef, async (snapshot) => {
+        const status = snapshot.val() || { status: 'waiting' };
+        if (status.status === 'starting') {
             switchScreen(matchScreen);
             playerOneNameDisplay.textContent = playerName;
             currentQuestionIndex = 0;
             myScore = 0;
             correctAnswersCount = 0;
             incorrectAnswersCount = 0;
-            loadQuestions().then(() => startQuestion());
+            await loadQuestions();
+            
+            startQuestion();
 
             set(ref(database, 'players/' + playerName + '/status'), 'playing');
             remove(ref(database, 'matchmakingQueue/' + playerName));
@@ -130,7 +184,7 @@ function handlePlayerListUpdate() {
     });
 }
 
-// منطق المباراة
+// منطق اللعبة المشترك
 async function loadQuestions() {
     const response = await fetch('questions.json');
     const data = await response.json();
@@ -144,84 +198,26 @@ function startQuestion() {
     }
 
     hasAnswered = false;
-    const question = questionSet[currentQuestionIndex];
-    questionText.textContent = question.question;
-    answersContainer.innerHTML = '';
+    const currentQuestion = questionSet[currentQuestionIndex];
+    
+    // إخفاء جميع عناصر الإجابة
+    answersContainer.classList.add('hidden');
+    timerDisplay.classList.add('hidden');
+    questionText.classList.add('hidden');
+    cluesList.classList.add('hidden');
+    answerInput.classList.add('hidden');
+    submitBtn.classList.add('hidden');
     matchResultMessage.classList.add('hidden');
+
     questionCountDisplay.textContent = `الأسئلة: ${currentQuestionIndex + 1}/${TOTAL_QUESTIONS}`;
-    
-    const shuffledAnswers = question.answers.sort(() => 0.5 - Math.random());
-    
-    shuffledAnswers.forEach(answer => {
-        const button = document.createElement('button');
-        button.classList.add('answer-btn');
-        button.textContent = answer.text;
-        button.addEventListener('click', () => handleAnswerClick(button, answer.correct));
-        answersContainer.appendChild(button);
-    });
 
-    startTimer(question.time); // نمرر الوقت الخاص بالسؤال
-}
-
-function handleAnswerClick(selectedButton, isCorrect) {
-    if (hasAnswered) return;
-    hasAnswered = true;
-    selectAnswer(selectedButton, isCorrect);
-}
-
-function startTimer(timeLeft) { // الدالة الآن تستقبل الوقت كـ `argument`
-    timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            if (!hasAnswered) {
-                selectAnswer(null, false);
-            }
-        }
-    }, 1000);
-}
-
-function selectAnswer(selectedButton, isCorrect) {
-    clearInterval(timerInterval);
-    disableAnswerButtons();
-
-    if (isCorrect) {
-        myScore += POINTS_PER_CORRECT_ANSWER;
-        correctAnswersCount++;
-        matchResultMessage.textContent = "إجابة صحيحة! +3 نقاط";
-    } else {
-        myScore += POINTS_PER_INCORRECT_ANSWER;
-        incorrectAnswersCount++;
-        matchResultMessage.textContent = selectedButton ? "إجابة خاطئة. -2 نقطة" : "انتهى الوقت! -2 نقطة";
+    if (currentQuestion.type === 'quiz') {
+        startQuizRound(currentQuestion);
+    } else if (currentQuestion.type === 'ana_meen') {
+        startAnaMeenRound(currentQuestion);
     }
-
-    matchResultMessage.classList.remove('hidden');
-
-    const question = questionSet[currentQuestionIndex];
-    document.querySelectorAll('.answer-btn').forEach(btn => {
-        if (question.answers.find(a => a.correct).text === btn.textContent) {
-            btn.classList.add('correct');
-        }
-        if (selectedButton && selectedButton === btn) {
-            btn.classList.add(isCorrect ? 'correct' : 'incorrect');
-        }
-    });
-    
-    setTimeout(() => {
-        currentQuestionIndex++;
-        startQuestion();
-    }, 2000);
 }
 
-function disableAnswerButtons() {
-    document.querySelectorAll('.answer-btn').forEach(btn => {
-        btn.disabled = true;
-    });
-}
-
-// دالة إنهاء اللعبة وتخزين النتائج
 async function endGame() {
     const playerRef = ref(database, 'players/' + playerName);
     await set(playerRef, {
@@ -231,11 +227,142 @@ async function endGame() {
         incorrectAnswers: incorrectAnswersCount,
         status: 'finished'
     });
-
     displayResults();
 }
 
-// عرض شاشة النتائج النهائية
+// ----------------------------------------------------
+// منطق لعبة الاختيارات
+// ----------------------------------------------------
+function startQuizRound(question) {
+    // إظهار عناصر الاختيارات
+    answersContainer.classList.remove('hidden');
+    timerDisplay.classList.remove('hidden');
+    questionText.classList.remove('hidden');
+
+    questionText.textContent = question.question;
+    answersContainer.innerHTML = '';
+    
+    const shuffledAnswers = question.answers.sort(() => 0.5 - Math.random());
+    
+    shuffledAnswers.forEach(answer => {
+        const button = document.createElement('button');
+        button.classList.add('answer-btn');
+        button.textContent = answer.text;
+        button.addEventListener('click', () => handleQuizAnswer(button, answer.correct));
+        answersContainer.appendChild(button);
+    });
+
+    startTimer(question.time);
+}
+
+function startTimer(timeLeft) {
+    timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `الوقت المتبقي: ${timeLeft}`;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            if (!hasAnswered) {
+                handleQuizAnswer(null, false);
+            }
+        }
+    }, 1000);
+}
+
+function handleQuizAnswer(selectedButton, isCorrect) {
+    if (hasAnswered) return;
+    hasAnswered = true;
+    clearInterval(timerInterval);
+    disableQuizButtons();
+
+    if (isCorrect) {
+        myScore += QUIZ_POINTS_CORRECT;
+        correctAnswersCount++;
+        matchResultMessage.textContent = "إجابة صحيحة! +3 نقاط";
+    } else {
+        myScore += QUIZ_POINTS_INCORRECT;
+        incorrectAnswersCount++;
+        matchResultMessage.textContent = selectedButton ? "إجابة خاطئة. -2 نقطة" : "انتهى الوقت! -2 نقطة";
+    }
+
+    matchResultMessage.classList.remove('hidden');
+    
+    if (selectedButton) {
+        const question = questionSet[currentQuestionIndex];
+        document.querySelectorAll('.answer-btn').forEach(btn => {
+            if (question.answers.find(a => a.correct).text === btn.textContent) {
+                btn.classList.add('correct');
+            }
+            if (selectedButton === btn) {
+                btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+            }
+        });
+    }
+
+    setTimeout(() => {
+        currentQuestionIndex++;
+        startQuestion();
+    }, 2000);
+}
+
+function disableQuizButtons() {
+    document.querySelectorAll('.answer-btn').forEach(btn => {
+        btn.disabled = true;
+    });
+}
+
+
+// ----------------------------------------------------
+// منطق لعبة "أنا مين؟"
+// ----------------------------------------------------
+function startAnaMeenRound(question) {
+    // إظهار عناصر "أنا مين؟"
+    cluesList.classList.remove('hidden');
+    answerInput.classList.remove('hidden');
+    submitBtn.classList.remove('hidden');
+    
+    cluesList.innerHTML = '';
+    answerInput.value = '';
+    submitBtn.disabled = false;
+
+    question.clues.forEach(clue => {
+        const li = document.createElement('li');
+        li.textContent = clue;
+        cluesList.appendChild(li);
+    });
+}
+
+submitBtn.addEventListener('click', () => {
+    if (hasAnswered) return;
+    
+    const userAnswer = answerInput.value.trim();
+    const correctAnswer = questionSet[currentQuestionIndex].answer;
+    
+    let isCorrect = (userAnswer.toLowerCase() === correctAnswer.toLowerCase());
+
+    hasAnswered = true;
+    submitBtn.disabled = true;
+
+    if (isCorrect) {
+        myScore += ANA_MEEN_POINTS_CORRECT;
+        correctAnswersCount++;
+        matchResultMessage.textContent = "إجابة صحيحة! +5 نقاط";
+    } else {
+        incorrectAnswersCount++;
+        matchResultMessage.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${correctAnswer}`;
+    }
+
+    matchResultMessage.classList.remove('hidden');
+    
+    setTimeout(() => {
+        currentQuestionIndex++;
+        startQuestion();
+    }, 2000);
+});
+
+// ----------------------------------------------------
+// عرض شاشة النتائج النهائية (مشترك)
+// ----------------------------------------------------
 async function displayResults() {
     switchScreen(resultsScreen);
 
@@ -260,25 +387,16 @@ async function displayResults() {
                     <th>الترتيب</th>
                     <th>اسم اللاعب</th>
                     <th>النقاط</th>
-                    <th>إجابات صحيحة</th>
-                    <th>إجابات خاطئة</th>
-                    <th>الحالة</th>
                 </tr>
             </thead>
             <tbody>
                 ${sortedPlayers.map((player, index) => {
-                    const statusText = player.status === 'finished' ? 'انتهى' : 'في اللعب';
                     const score = player.score || 0;
-                    const correct = player.correctAnswers || 0;
-                    const incorrect = player.incorrectAnswers || 0;
                     return `
                         <tr>
                             <td>${index + 1}</td>
                             <td>${player.name} ${player.name === playerName ? '(أنت)' : ''} ${index === 0 ? '(حامل اللقب)' : ''}</td>
                             <td>${score}</td>
-                            <td>${correct}</td>
-                            <td>${incorrect}</td>
-                            <td>${statusText}</td>
                         </tr>
                     `;
                 }).join('')}

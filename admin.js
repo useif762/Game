@@ -2,7 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
 import { getDatabase, ref, onValue, set, get, remove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
-// إعدادات Firebase (استخدم نفس الإعدادات اللي عندك)
+// إعدادات Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAXiTvVK16h_nJF3439sOhOHJpnhzq-Qkk",
     authDomain: "game-3-36b40.firebaseapp.com",
@@ -82,8 +82,8 @@ onValue(playersRef, (snapshot) => {
 
 // زر "ابدأ البطولة"
 startTournamentBtn.addEventListener('click', async () => {
-    // نغير حالة اللعبة إلى 'starting' عشان كل اللاعبين يبدأوا
-    await set(gameStatusRef, 'starting');
+    // إرسال إشارة البدء فقط
+    await set(gameStatusRef, { status: 'starting', round: 1 });
     startTournamentBtn.disabled = true;
     resetGameBtn.disabled = true;
 });
@@ -92,10 +92,12 @@ startTournamentBtn.addEventListener('click', async () => {
 resetGameBtn.addEventListener('click', async () => {
     if (confirm('هل أنت متأكد من إعادة تعيين اللعبة بالكامل؟ سيتم حذف جميع اللاعبين ونتائجهم.')) {
         startTournamentBtn.disabled = true;
-        resetGameBtn.disabled = false; // نترك زر إعادة التعيين متاحًا
-        await set(playersRef, null); // حذف كل اللاعبين
-        await set(matchmakingQueueRef, null); // حذف قائمة الانتظار
-        await set(gameStatusRef, 'waiting'); // إعادة حالة اللعبة إلى 'waiting'
+        resetGameBtn.disabled = false;
+        // حذف جميع بيانات اللاعبين في Firebase
+        await set(playersRef, null);
+        await set(matchmakingQueueRef, null);
+        // إعادة حالة اللعبة إلى وضع الانتظار
+        await set(gameStatusRef, { status: 'waiting', round: 0 });
         startTournamentBtn.disabled = false;
         resetGameBtn.disabled = false;
     }
@@ -109,11 +111,22 @@ document.addEventListener('click', async (e) => {
     if (e.target && e.target.classList.contains('delete-btn')) {
         const playerName = e.target.dataset.playerName;
         if (confirm(`هل أنت متأكد من حذف اللاعب ${playerName}؟`)) {
-            // حذف اللاعب من قائمة اللاعبين
+            // حذف بيانات اللاعب من Firebase
             await remove(ref(database, 'players/' + playerName));
-            // حذف اللاعب من قائمة الانتظار (إذا كان موجودًا)
             await remove(ref(database, 'matchmakingQueue/' + playerName));
             alert(`تم حذف اللاعب ${playerName}.`);
         }
+    }
+});
+
+// مراقبة حالة اللعبة لتحديث زر البدء
+onValue(gameStatusRef, (snapshot) => {
+    const status = snapshot.val() || { status: 'waiting' };
+    if (status.status === 'starting') {
+        startTournamentBtn.disabled = true;
+        resetGameBtn.disabled = false;
+    } else {
+        startTournamentBtn.disabled = false;
+        resetGameBtn.disabled = false;
     }
 });
