@@ -215,8 +215,8 @@ async function loadQuestions() {
     const religiousQuizQuestions = religiousQuestions.filter(q => q.type === 'quiz');
     const spiritualQuestions = religiousQuestions.filter(q => q.type === 'spiritual');
 
-    const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 3);
-    const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 2);
+    const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 2);
+    const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 1);
     
     // اختيار باقي الأسئلة من القائمة غير الدينية
     const remainingCount = TOTAL_QUESTIONS - selectedReligiousQuiz.length - selectedSpiritual.length;
@@ -516,6 +516,5 @@ async function displayResults() {
 function switchScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     screen.classList.add('active');
-                       }
+    }
         
-
