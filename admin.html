@@ -3,63 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم البطولة</title>
+    <title>صفحة المشرف</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+            direction: rtl;
+            text-align: right;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #007bff;
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #28a745;
+            transition: background-color 0.3s ease;
+        }
+
+        button.reset-btn {
+            background-color: #dc3545;
+        }
+
+        button:hover {
+            opacity: 0.85;
+        }
+        
+        #players-ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        #players-ul li {
+            background-color: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="admin-container">
-        <h1>لوحة تحكم البطولة</h1>
-        <p>مرحباً بالقائد. من هنا يمكنك مراقبة وإدارة اللعبة.</p>
+    <div class="container">
+        <h1>لوحة تحكم المشرف</h1>
 
-        <div class="control-section">
-            <h2>إدارة البطولة</h2>
-            <p>اضغط على "ابدأ البطولة" عندما يكون الجميع جاهزاً.</p>
-            <button id="startTournamentBtn" class="admin-btn">ابدأ البطولة</button>
-            <button id="resetGameBtn" class="admin-btn reset-btn">إعادة تعيين اللعبة</button>
+        <div class="section">
+            <h2>اللاعبون في قائمة الانتظار</h2>
+            <ul id="players-ul"></ul>
+            <div class="controls">
+                <button id="startGameBtn">بدء اللعبة</button>
+                <button id="resetBtn" class="reset-btn">إعادة تعيين اللعبة</button>
+            </div>
         </div>
 
-        <div class="monitoring-section">
-            <div class="column-left">
-                <h2>مراقبة اللاعبين</h2>
-                <div class="live-status">
-                    <div class="status-box">
-                        <p>عدد اللاعبين في الانتظار:</p>
-                        <span id="waitingCount" class="count-display">0</span>
-                    </div>
-                    <div class="status-box">
-                        <p>عدد اللاعبين في اللعب:</p>
-                        <span id="playingCount" class="count-display">0</span>
-                    </div>
-                </div>
-                <div class="scrollable-list">
-                    <h3>قائمة اللاعبين في الانتظار:</h3>
-                    <ul id="waitingPlayersList"></ul>
-                </div>
-            </div>
-            
-            <div class="column-right">
-                <h3>حالة اللاعبين الحاليين:</h3>
-                <div class="scrollable-list">
-                    <table id="liveLeaderboardTable">
-                        <thead>
-                            <tr>
-                                <th>الاسم</th>
-                                <th>النقاط</th>
-                                <th>حالة اللاعب</th>
-                                <th>حذف</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="section">
+            <h2>النتائج النهائية</h2>
+            <table id="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>الترتيب</th>
+                        <th>اسم اللاعب</th>
+                        <th>النقاط</th>
+                        <th>الإجابات الصحيحة</th>
+                        <th>الإجابات الخاطئة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
         </div>
     </div>
 
-    <script src="admin.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js" type="module"></script>
+    <script src="script.js" type="module"></script>
 </body>
 </html>
