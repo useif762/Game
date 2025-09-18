@@ -16,13 +16,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// عناصر HTML
+// عناصر HTML (لصفحة المشرف)
 const startTournamentBtn = document.getElementById('startTournamentBtn');
 const resetGameBtn = document.getElementById('resetGameBtn');
 const waitingCountDisplay = document.getElementById('waitingCount');
 const playingCountDisplay = document.getElementById('playingCount');
 const waitingPlayersList = document.getElementById('waitingPlayersList');
 const liveLeaderboardTableBody = document.querySelector('#liveLeaderboardTable tbody');
+const playersUl = document.getElementById('players-ul');
 
 // مراجع Firebase
 const playersRef = ref(database, 'players');
@@ -30,111 +31,118 @@ const matchmakingQueueRef = ref(database, 'matchmakingQueue');
 const gameStatusRef = ref(database, 'gameStatus');
 
 // ----------------------------------------------------
-// 1. مراقبة البيانات في الوقت الفعلي
+// منطق صفحة المشرف
 // ----------------------------------------------------
-
-// مراقبة قائمة الانتظار
-onValue(matchmakingQueueRef, (snapshot) => {
-    const queue = snapshot.val() || {};
-    const playerNames = Object.keys(queue);
-    waitingCountDisplay.textContent = playerNames.length;
-    
-    waitingPlayersList.innerHTML = '';
-    if (playerNames.length > 0) {
-        playerNames.forEach(name => {
-            const li = document.createElement('li');
-            li.innerHTML = `${name} <button class="delete-btn" data-player-name="${name}">حذف اللاعب</button>`;
-            waitingPlayersList.appendChild(li);
-        });
-    } else {
-        waitingPlayersList.innerHTML = '<li>لا يوجد لاعبون في قائمة الانتظار.</li>';
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    setupAdminPage();
 });
 
-// مراقبة جميع اللاعبين وحالتهم
-onValue(playersRef, (snapshot) => {
-    const allPlayers = snapshot.val() || {};
-    const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0));
-    
-    const playingCount = sortedPlayers.filter(p => p.status === 'playing' || p.status === 'waiting').length;
-    playingCountDisplay.textContent = playingCount;
+function setupAdminPage() {
+    handlePlayerListUpdate();
+    listenToGameStatusForAdmin();
+    handleAdminButtons();
+    listenForPlayerDeletions();
+    setupLiveLeaderboard();
+}
 
-    liveLeaderboardTableBody.innerHTML = '';
-    if (sortedPlayers.length > 0) {
-        sortedPlayers.forEach(player => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${player.name}</td>
-                <td>${player.score || 0}</td>
-                <td>${player.correctAnswers || 0}</td>
-                <td>${player.incorrectAnswers || 0}</td>
-                <td>${player.status === 'finished' ? 'انتهى' : player.status === 'playing' ? 'يلعب' : 'في الانتظار'}</td>
-                <td><button class="delete-btn" data-player-name="${player.name}">حذف</button></td>
-            `;
-            liveLeaderboardTableBody.appendChild(row);
-        });
-    } else {
-        liveLeaderboardTableBody.innerHTML = '<tr><td colspan="6">لا يوجد لاعبون حالياً.</td></tr>';
-    }
-});
-
-// ----------------------------------------------------
-// 2. التحكم في اللعبة
-// ----------------------------------------------------
-
-// زر "ابدأ البطولة"
-startTournamentBtn.addEventListener('click', async () => {
-    const matchmakingSnapshot = await get(matchmakingQueueRef);
-    const playerCount = Object.keys(matchmakingSnapshot.val() || {}).length;
-
-    if (playerCount > 0) {
-        await set(gameStatusRef, { status: 'starting', round: 1 });
-        // تم حذف السطر `startTournamentBtn.disabled = true;` لأن حالة الزرار يتم التحكم فيها عبر `onValue`
-        alert('تم إرسال إشارة بدء البطولة إلى اللاعبين.');
-    } else {
-        alert('لا يوجد لاعبون في قائمة الانتظار.');
-    }
-});
-
-// زر "إعادة تعيين اللعبة"
-resetGameBtn.addEventListener('click', async () => {
-    if (confirm('هل أنت متأكد من إعادة تعيين اللعبة بالكامل؟ سيتم حذف جميع اللاعبين ونتائجهم.')) {
-        // حذف جميع بيانات اللاعبين في Firebase
-        await set(playersRef, null);
-        await set(matchmakingQueueRef, null);
-        // إعادة حالة اللعبة إلى وضع الانتظار
-        await set(gameStatusRef, { status: 'waiting', round: 0 });
-        alert('تم إعادة تعيين اللعبة بنجاح.');
-    }
-});
-
-// ----------------------------------------------------
-// 3. حذف لاعب معين
-// ----------------------------------------------------
-
-document.addEventListener('click', async (e) => {
-    if (e.target && e.target.classList.contains('delete-btn')) {
-        const playerName = e.target.dataset.playerName;
-        if (confirm(`هل أنت متأكد من حذف اللاعب ${playerName}؟`)) {
-            // حذف بيانات اللاعب من Firebase
-            await remove(ref(database, 'players/' + playerName));
-            await remove(ref(database, 'matchmakingQueue/' + playerName));
-            alert(`تم حذف اللاعب ${playerName}.`);
+function handlePlayerListUpdate() {
+    onValue(matchmakingQueueRef, (snapshot) => {
+        const queue = snapshot.val() || {};
+        const playerNames = Object.keys(queue);
+        if (waitingCountDisplay) waitingCountDisplay.textContent = playerNames.length;
+        
+        if (playersUl) {
+            playersUl.innerHTML = '';
+            playerNames.forEach(name => {
+                const li = document.createElement('li');
+                li.innerHTML = `${name} <button class="delete-btn" data-player-name="${name}">حذف اللاعب</button>`;
+                playersUl.appendChild(li);
+            });
         }
-    }
-});
+    });
+}
 
-// ----------------------------------------------------
-// 4. تحسين التحكم في حالة الأزرار
-// ----------------------------------------------------
-// مراقبة حالة اللعبة لتحديث زر البدء وإعادة التعيين تلقائياً
-onValue(gameStatusRef, (snapshot) => {
-    const status = snapshot.val() || { status: 'waiting' };
-    if (status.status === 'starting') {
-        startTournamentBtn.disabled = true; // يتم تعطيل زر "ابدأ" عند بدء البطولة
-        resetGameBtn.disabled = false; // يتم تفعيل زر "إعادة التعيين" أثناء البطولة
-    } else {
-        startTournamentBtn.disabled = false; // يتم تفعيل زر "ابدأ" عندما لا تكون البطولة شغالة
-        resetGameBtn.disabled = true; // يتم تعطيل زر "إعادة التعيين" عندما لا تكون البطولة شغالة
+function listenToGameStatusForAdmin() {
+    onValue(gameStatusRef, (snapshot) => {
+        const status = snapshot.val() || { status: 'waiting' };
+        if (startTournamentBtn) {
+            if (status.status === 'starting') {
+                startTournamentBtn.disabled = true;
+                resetGameBtn.disabled = false;
+            } else {
+                startTournamentBtn.disabled = false;
+                resetGameBtn.disabled = false;
+            }
+        }
+    });
+}
+
+function setupLiveLeaderboard() {
+    onValue(playersRef, (snapshot) => {
+        const allPlayers = snapshot.val() || {};
+        const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0));
+        
+        if (playingCountDisplay) playingCountDisplay.textContent = sortedPlayers.length;
+
+        if (liveLeaderboardTableBody) {
+            liveLeaderboardTableBody.innerHTML = '';
+            if (sortedPlayers.length > 0) {
+                sortedPlayers.forEach(player => {
+                    const row = document.createElement('tr');
+                    const correct = player.correctAnswers || 0;
+                    const incorrect = player.incorrectAnswers || 0;
+                    row.innerHTML = `
+                        <td>${player.name}</td>
+                        <td>${player.score || 0}</td>
+                        <td>${correct}</td>
+                        <td>${incorrect}</td>
+                        <td>${player.status === 'finished' ? 'انتهى' : player.status === 'playing' ? 'يلعب' : 'في الانتظار'}</td>
+                        <td><button class="delete-btn" data-player-name="${player.name}">حذف</button></td>
+                    `;
+                    liveLeaderboardTableBody.appendChild(row);
+                });
+            } else {
+                liveLeaderboardTableBody.innerHTML = '<tr><td colspan="6">لا يوجد لاعبون حالياً.</td></tr>';
+            }
+        }
+    });
+}
+
+function handleAdminButtons() {
+    if (startTournamentBtn) {
+        startTournamentBtn.addEventListener('click', async () => {
+            const matchmakingSnapshot = await get(matchmakingQueueRef);
+            const playerCount = Object.keys(matchmakingSnapshot.val() || {}).length;
+            if (playerCount > 0) {
+                await set(gameStatusRef, { status: 'starting', round: 1 });
+                alert('تم إرسال إشارة بدء البطولة إلى اللاعبين.');
+            } else {
+                alert('لا يوجد لاعبون في قائمة الانتظار.');
+            }
+        });
     }
-});
+
+    if (resetGameBtn) {
+        resetGameBtn.addEventListener('click', async () => {
+            if (confirm('هل أنت متأكد من إعادة تعيين اللعبة بالكامل؟ سيتم حذف جميع اللاعبين ونتائجهم.')) {
+                await set(playersRef, null);
+                await set(matchmakingQueueRef, null);
+                await set(gameStatusRef, { status: 'waiting', round: 0 });
+                alert('تم إعادة تعيين اللعبة بنجاح.');
+            }
+        });
+    }
+}
+
+function listenForPlayerDeletions() {
+    document.addEventListener('click', async (e) => {
+        if (e.target && e.target.classList.contains('delete-btn')) {
+            const playerName = e.target.dataset.playerName;
+            if (confirm(`هل أنت متأكد من حذف اللاعب ${playerName}؟`)) {
+                await remove(ref(database, 'players/' + playerName));
+                await remove(ref(database, 'matchmakingQueue/' + playerName));
+                alert(`تم حذف اللاعب ${playerName}.`);
+            }
+        }
+    });
+}
