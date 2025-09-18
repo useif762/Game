@@ -27,6 +27,15 @@ let questionSet = [];
 let hasAnswered = false;
 const TOTAL_QUESTIONS = 15;
 
+// تعريف النقاط لكل نوع من الأسئلة
+const QUIZ_POINTS_CORRECT = 3;
+const QUIZ_POINTS_INCORRECT = -2;
+const SPIRITUAL_POINTS_CORRECT = 5;
+const SPIRITUAL_POINTS_INCORRECT = -2;
+const ANA_MEEN_POINTS_CORRECT = 5;
+const ANA_MEEN_POINTS_INCORRECT = -2;
+
+
 // عناصر HTML (لصفحة اللاعب)
 const loadingScreen = document.getElementById('loading-screen');
 const registerScreen = document.getElementById('register-screen');
@@ -361,11 +370,21 @@ function handleAnswer(isCorrect, correctAnswer) {
     answerInput.disabled = true;
 
     if (isCorrect) {
-        myScore += SPIRITUAL_POINTS_CORRECT;
+        const currentQuestion = questionSet[currentQuestionIndex];
+        if (currentQuestion.type === 'ana_meen') {
+            myScore += ANA_MEEN_POINTS_CORRECT;
+        } else if (currentQuestion.type === 'spiritual') {
+            myScore += SPIRITUAL_POINTS_CORRECT;
+        }
         correctAnswersCount++;
         matchResultMessage.textContent = "إجابة صحيحة! +5 نقاط";
     } else {
-        myScore += QUIZ_POINTS_INCORRECT;
+        const currentQuestion = questionSet[currentQuestionIndex];
+        if (currentQuestion.type === 'ana_meen') {
+            myScore += ANA_MEEN_POINTS_INCORRECT;
+        } else if (currentQuestion.type === 'spiritual') {
+            myScore += SPIRITUAL_POINTS_INCORRECT;
+        }
         incorrectAnswersCount++;
         matchResultMessage.textContent = `إجابة خاطئة. الإجابة الصحيحة هي: ${correctAnswer}. -2 نقطة`;
     }
@@ -457,5 +476,4 @@ function displayResults() {
 function switchScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     screen.classList.add('active');
-                    }
-                               
+                                          }
