@@ -1,6 +1,6 @@
 // استيراد مكتبات Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-import { getDatabase, ref, onValue, set, get, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+import { getDatabase, ref, onValue, set, get, remove } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
 
 // إعدادات Firebase
 const firebaseConfig = {
@@ -27,7 +27,7 @@ let questionSet = [];
 let hasAnswered = false;
 const TOTAL_QUESTIONS = 15;
 
-// عناصر HTML
+// عناصر HTML (لصفحة اللاعب)
 const loadingScreen = document.getElementById('loading-screen');
 const registerScreen = document.getElementById('register-screen');
 const waitingScreen = document.getElementById('waiting-screen');
@@ -35,10 +35,9 @@ const matchScreen = document.getElementById('match-screen');
 const resultsScreen = document.getElementById('results-screen');
 const playerNameInput = document.getElementById('playerNameInput');
 const registerBtn = document.getElementById('registerBtn');
-const playersUl = document.getElementById('players-ul');
 const playerOneNameDisplay = document.getElementById('player-one-name');
 
-// عناصر واجهة اللعبة
+// عناصر واجهة اللعبة (لصفحة اللاعب)
 const timerDisplay = document.getElementById('timer');
 const questionCountDisplay = document.getElementById('question-count');
 const questionText = document.getElementById('question-text');
@@ -48,19 +47,13 @@ const cluesList = document.getElementById('clues-list');
 const answerInput = document.getElementById('answerInput');
 const submitBtn = document.getElementById('submitBtn');
 
-// عناصر النتائج المشتركة
+// عناصر النتائج المشتركة (لصفحة اللاعب)
 const winnerNameDisplay = document.getElementById('winner-name');
 const trophyImage = document.getElementById('trophy-image');
 const leaderboardTable = document.getElementById('leaderboard-table');
 const finalMessageDisplay = document.getElementById('final-message');
 
-// ثابتات اللعبة
-const QUIZ_POINTS_CORRECT = 3;
-const QUIZ_POINTS_INCORRECT = -2;
-const ANA_MEEN_POINTS_CORRECT = 5;
-const SPIRITUAL_POINTS_CORRECT = 5; // نقاط الأسئلة الروحانية
-
-// منطق اللعبة باستخدام Firebase
+// مراجع Firebase
 const playersRef = ref(database, 'players');
 const matchmakingQueueRef = ref(database, 'matchmakingQueue');
 const gameStatusRef = ref(database, 'gameStatus');
@@ -68,67 +61,91 @@ const gameStatusRef = ref(database, 'gameStatus');
 // متغير لتخزين مرجع مراقب اللاعب
 let playerRemovalListener = null;
 
-// بداية اللعبة
+// ----------------------------------------------------
+// منطق صفحة اللاعب
+// ----------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
-    switchScreen(registerScreen);
-    handlePlayerListUpdate();
-    listenToGameStatus();
+    switchScreen(loadingScreen);
+    listenToGameStatusForPlayer();
 });
+
+function listenToGameStatusForPlayer() {
+    switchScreen(registerScreen);
+    
+    onValue(gameStatusRef, async (snapshot) => {
+        const status = snapshot.val() || { status: 'waiting' };
+        if (status.status === 'starting' && playerName) {
+            switchScreen(matchScreen);
+            playerOneNameDisplay.textContent = playerName;
+            currentQuestionIndex = 0;
+            myScore = 0;
+            correctAnswersCount = 0;
+            incorrectAnswersCount = 0;
+            await loadQuestions();
+            startQuestion();
+            set(ref(database, 'players/' + playerName + '/status'), 'playing');
+            remove(ref(database, 'matchmakingQueue/' + playerName));
+        } else if (status.status === 'waiting' && playerName) {
+            switchScreen(waitingScreen);
+            alert('تم إعادة تعيين اللعبة من قبل القائد، يرجى التسجيل مرة أخرى.');
+            resetGameClientSide();
+            window.location.reload();
+        } else if (status.status === 'finished') {
+             // يمكن إضافة منطق إضافي هنا إذا لزم الأمر
+        }
+    });
+}
 
 // التعامل مع تسجيل اللاعب
-registerBtn.addEventListener('click', async () => {
-    registerBtn.disabled = true;
-    playerName = playerNameInput.value.trim();
+if (registerBtn) {
+    registerBtn.addEventListener('click', async () => {
+        registerBtn.disabled = true;
+        playerName = playerNameInput.value.trim();
 
-    if (playerName && playerName.length > 2) {
-        const playersSnapshot = await get(playersRef);
-        const players = playersSnapshot.val() || {};
-        if (Object.keys(players).some(key => players[key].name === playerName) || Object.keys(await get(matchmakingQueueRef)).some(name => name === playerName)) {
-            alert('الاسم مستخدم بالفعل. الرجاء اختيار اسم آخر.');
+        if (playerName && playerName.length > 2) {
+            const playersSnapshot = await get(playersRef);
+            const players = playersSnapshot.val() || {};
+            if (Object.keys(players).some(key => players[key].name === playerName)) {
+                alert('الاسم مستخدم بالفعل. الرجاء اختيار اسم آخر.');
+                registerBtn.disabled = false;
+                return;
+            }
+
+            await set(ref(database, 'players/' + playerName), {
+                name: playerName,
+                score: 0,
+                status: 'waiting',
+                correctAnswers: 0,
+                incorrectAnswers: 0
+            });
+
+            await set(ref(database, 'matchmakingQueue/' + playerName), true);
+            
+            listenToPlayerRemoval();
+            switchScreen(waitingScreen);
             registerBtn.disabled = false;
-            return;
+        } else {
+            registerBtn.disabled = false;
         }
+    });
+}
 
-        await set(ref(database, 'players/' + playerName), {
-            name: playerName,
-            score: 0,
-            status: 'waiting'
-        });
-
-        await set(ref(database, 'matchmakingQueue/' + playerName), true);
-        
-        // إعداد مراقب لحذف اللاعب من قبل الأدمن
-        listenToPlayerRemoval();
-
-        switchScreen(waitingScreen);
-        registerBtn.disabled = false;
-    } else {
-        registerBtn.disabled = false;
-    }
-});
-
-// دالة لمراقبة بيانات اللاعب الخاصة
 function listenToPlayerRemoval() {
-    // إزالة المراقب القديم إذا كان موجوداً
     if (playerRemovalListener) {
         playerRemovalListener();
     }
     
-    // إعداد مراقب جديد على بيانات اللاعب الحالية
     const playerNodeRef = ref(database, 'players/' + playerName);
     playerRemovalListener = onValue(playerNodeRef, (snapshot) => {
         const playerData = snapshot.val();
-        // إذا كانت البيانات null، هذا يعني أنه تم حذف اللاعب
         if (playerData === null) {
             alert('تم حذف حسابك من اللعبة بواسطة القائد.');
             resetGameClientSide();
-            // لإجبار إعادة التحميل وضمان مسح كل البيانات
             window.location.reload();
         }
     });
 }
 
-// دالة لتصفير بيانات اللعبة في المتصفح وإعادة التوجيه
 function resetGameClientSide() {
     clearInterval(timerInterval);
     playerName = '';
@@ -138,98 +155,38 @@ function resetGameClientSide() {
     incorrectAnswersCount = 0;
     questionSet = [];
     hasAnswered = false;
-    
-    // إزالة المراقب الخاص باللاعب الحالي لمنع تفعيله مرة أخرى
     if (playerRemovalListener) {
         playerRemovalListener();
         playerRemovalListener = null;
     }
-    
     switchScreen(registerScreen);
 }
 
-// دالة للاستماع لأوامر لوحة التحكم
-function listenToGameStatus() {
-    onValue(gameStatusRef, async (snapshot) => {
-        const status = snapshot.val() || { status: 'waiting' };
-        console.log('Game status changed:', status.status); // للتأكد أن الكود يعمل
-
-        if (status.status === 'starting') {
-            if (playerName) { // تأكد أن اللاعب مسجل قبل بدء اللعب
-                switchScreen(matchScreen);
-                playerOneNameDisplay.textContent = playerName;
-                currentQuestionIndex = 0;
-                myScore = 0;
-                correctAnswersCount = 0;
-                incorrectAnswersCount = 0;
-                await loadQuestions();
-                
-                startQuestion();
-    
-                set(ref(database, 'players/' + playerName + '/status'), 'playing');
-                remove(ref(database, 'matchmakingQueue/' + playerName));
-            } else {
-                 // إذا لم يكن مسجلاً، أعده إلى شاشة التسجيل
-                 switchScreen(registerScreen);
-            }
-        } else if (status.status === 'waiting' && playerName) {
-            // إذا تم إعادة تعيين اللعبة من قبل المشرف
-            alert('تم إعادة تعيين اللعبة من قبل القائد، يرجى التسجيل مرة أخرى.');
-            resetGameClientSide();
-            window.location.reload();
-        }
-    });
-}
-
-// تحديث قائمة اللاعبين في قائمة الانتظار
-function handlePlayerListUpdate() {
-    onValue(matchmakingQueueRef, (snapshot) => {
-        const queue = snapshot.val() || {};
-        const playerNames = Object.keys(queue);
-        playersUl.innerHTML = '';
-        playerNames.forEach(name => {
-            const li = document.createElement('li');
-            li.textContent = name;
-            playersUl.appendChild(li);
-        });
-    });
-}
-
-// ----------------------------------------------------
-// منطق اختيار وتحميل الأسئلة
-// ----------------------------------------------------
 async function loadQuestions() {
     const response = await fetch('questions.json');
     const allQuestions = await response.json();
 
-    // فصل الأسئلة الدينية عن باقي الأسئلة
     const religiousQuestions = allQuestions.filter(q => 
         q.type === 'spiritual' || 
         (q.type === 'quiz' && (q.question.includes('الروح القدس') || q.question.includes('المسيح') || q.question.includes('أسفار') || q.question.includes('العذراء') || q.question.includes('عقيدة') || q.question.includes('حظ')))
     );
-
-    // فصل الأسئلة غير الدينية (بما فيها أسئلة أنا مين؟)
     const nonReligiousQuestions = allQuestions.filter(q => !religiousQuestions.includes(q));
 
-    // اختيار الأسئلة الدينية الإجبارية
     const religiousQuizQuestions = religiousQuestions.filter(q => q.type === 'quiz');
     const spiritualQuestions = religiousQuestions.filter(q => q.type === 'spiritual');
 
     const selectedReligiousQuiz = selectRandomQuestions(religiousQuizQuestions, 3);
     const selectedSpiritual = selectRandomQuestions(spiritualQuestions, 2);
     
-    // اختيار باقي الأسئلة من القائمة غير الدينية
     const remainingCount = TOTAL_QUESTIONS - selectedReligiousQuiz.length - selectedSpiritual.length;
     const selectedOthers = selectRandomQuestions(nonReligiousQuestions, remainingCount);
 
-    // دمج وتوزيع الأسئلة
     questionSet = [...selectedReligiousQuiz, ...selectedSpiritual, ...selectedOthers];
     shuffleArray(questionSet);
 }
 
 function selectRandomQuestions(arr, count) {
     if (arr.length < count) {
-        console.warn('Cannot select ' + count + ' questions from a pool of ' + arr.length + '. Returning all available questions.');
         return [...arr];
     }
     const shuffled = [...arr].sort(() => 0.5 - Math.random());
@@ -244,9 +201,6 @@ function shuffleArray(array) {
     return array;
 }
 
-// ----------------------------------------------------
-// منطق اللعبة
-// ----------------------------------------------------
 function startQuestion() {
     if (currentQuestionIndex >= TOTAL_QUESTIONS) {
         endGame();
@@ -256,7 +210,6 @@ function startQuestion() {
     hasAnswered = false;
     const currentQuestion = questionSet[currentQuestionIndex];
     
-    // إظهار وإخفاء العناصر حسب نوع السؤال
     matchResultMessage.classList.add('hidden');
     questionText.classList.remove('hidden');
 
@@ -276,7 +229,7 @@ function startQuestion() {
         submitBtn.classList.remove('hidden');
         startAnaMeenRound(currentQuestion);
 
-    } else if (currentQuestion.type === 'spiritual') { // إضافة منطق الأسئلة الروحانية
+    } else if (currentQuestion.type === 'spiritual') {
         answersContainer.classList.add('hidden');
         timerDisplay.classList.add('hidden');
         cluesList.classList.remove('hidden');
@@ -300,9 +253,6 @@ async function endGame() {
     displayResults();
 }
 
-// ----------------------------------------------------
-// منطق لعبة الاختيارات
-// ----------------------------------------------------
 function startQuizRound(question) {
     questionText.textContent = question.question;
     answersContainer.innerHTML = '';
@@ -376,15 +326,11 @@ function disableQuizButtons() {
     });
 }
 
-
-// ----------------------------------------------------
-// منطق لعبة "أنا مين؟"
-// ----------------------------------------------------
 function startAnaMeenRound(question) {
     cluesList.innerHTML = '';
     answerInput.value = '';
     submitBtn.disabled = false;
-    answerInput.disabled = false; // تفعيل مربع الإدخال
+    answerInput.disabled = false;
     questionText.textContent = "تنبيه: أنت الآن في جولة 'أنا مين؟' - اكتب الإجابة ثم اضغط إرسال أو اضغط Enter";
 
     question.clues.forEach(clue => {
@@ -394,9 +340,6 @@ function startAnaMeenRound(question) {
     });
 }
 
-// ----------------------------------------------------
-// منطق لعبة "الأسئلة الروحانية"
-// ----------------------------------------------------
 function startSpiritualRound(question) {
     cluesList.innerHTML = '';
     answerInput.value = '';
@@ -411,7 +354,6 @@ function startSpiritualRound(question) {
     });
 }
 
-// دالة منفصلة للتعامل مع الإجابة
 function handleAnswer(isCorrect, correctAnswer) {
     if (hasAnswered) return;
     hasAnswered = true;
@@ -436,34 +378,33 @@ function handleAnswer(isCorrect, correctAnswer) {
     }, 2000);
 }
 
-// زر الإرسال
-submitBtn.addEventListener('click', () => {
-    const currentQuestion = questionSet[currentQuestionIndex];
-    if (currentQuestion.type === 'ana_meen') {
-        handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
-    } else if (currentQuestion.type === 'spiritual') {
-        handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
-    }
-});
-
-
-// الضغط على Enter
-answerInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
+if (submitBtn) {
+    submitBtn.addEventListener('click', () => {
         const currentQuestion = questionSet[currentQuestionIndex];
         if (currentQuestion.type === 'ana_meen') {
             handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
         } else if (currentQuestion.type === 'spiritual') {
             handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
         }
-    }
-});
+    });
+}
 
 
-// ----------------------------------------------------
-// عرض شاشة النتائج النهائية (مشترك)
-// ----------------------------------------------------
-async function displayResults() {
+if (answerInput) {
+    answerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const currentQuestion = questionSet[currentQuestionIndex];
+            if (currentQuestion.type === 'ana_meen') {
+                handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
+            } else if (currentQuestion.type === 'spiritual') {
+                handleAnswer(answerInput.value.trim().toLowerCase() === currentQuestion.answer.toLowerCase(), currentQuestion.answer);
+            }
+        }
+    });
+}
+
+
+function displayResults() {
     switchScreen(resultsScreen);
 
     onValue(playersRef, (snapshot) => {
@@ -473,7 +414,6 @@ async function displayResults() {
         
         const finalWinner = sortedPlayers[0] || null;
 
-        // تم تعديل الشرط هنا ليعرض الفائز بغض النظر عن نقاطه
         if (finalWinner) {
             winnerNameDisplay.textContent = `فاز بالبطولة: ${finalWinner.name}`;
             trophyImage.classList.remove('hidden');
@@ -482,38 +422,40 @@ async function displayResults() {
             trophyImage.classList.add('hidden');
         }
 
-        leaderboardTable.innerHTML = `
-            <thead>
-                <tr>
-                    <th>الترتيب</th>
-                    <th>اسم اللاعب</th>
-                    <th>النقاط</th>
-                    <th>الإجابات الصحيحة</th>
-                    <th>الإجابات الخاطئة</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${sortedPlayers.map((player, index) => {
-                    const score = player.score || 0;
-                    const correct = player.correctAnswers || 0;
-                    const incorrect = player.incorrectAnswers || 0;
-                    return `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${player.name} ${player.name === playerName ? '(أنت)' : ''} ${index === 0 ? '(حامل اللقب)' : ''}</td>
-                            <td>${score}</td>
-                            <td>${correct}</td>
-                            <td>${incorrect}</td>
-                        </tr>
-                    `;
-                }).join('')}
-            </tbody>
-        `;
+        if (leaderboardTable) {
+            leaderboardTable.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>الترتيب</th>
+                        <th>اسم اللاعب</th>
+                        <th>النقاط</th>
+                        <th>الإجابات الصحيحة</th>
+                        <th>الإجابات الخاطئة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${sortedPlayers.map((player, index) => {
+                        const score = player.score || 0;
+                        const correct = player.correctAnswers || 0;
+                        const incorrect = player.incorrectAnswers || 0;
+                        return `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${player.name} ${player.name === playerName ? '(أنت)' : ''} ${index === 0 ? '(حامل اللقب)' : ''}</td>
+                                <td>${score}</td>
+                                <td>${correct}</td>
+                                <td>${incorrect}</td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            `;
+        }
     });
 }
 
-// دالة مساعدة لتغيير الشاشة
 function switchScreen(screen) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     screen.classList.add('active');
-}
+                    }
+                               
