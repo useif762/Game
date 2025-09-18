@@ -51,7 +51,7 @@ onValue(matchmakingQueueRef, (snapshot) => {
     }
 });
 
-// مراقبة جميع اللاعبين وحالتهم (تم التعديل هنا)
+// مراقبة جميع اللاعبين وحالتهم
 onValue(playersRef, (snapshot) => {
     const allPlayers = snapshot.val() || {};
     const sortedPlayers = Object.values(allPlayers).sort((a, b) => (b.score || 0) - (a.score || 0));
@@ -85,7 +85,7 @@ onValue(playersRef, (snapshot) => {
 // زر "ابدأ البطولة"
 startTournamentBtn.addEventListener('click', async () => {
     const matchmakingSnapshot = await get(matchmakingQueueRef);
-    const playerCount = Object.keys(match-makingSnapshot.val() || {}).length;
+    const playerCount = Object.keys(matchmakingSnapshot.val() || {}).length;
 
     if (playerCount > 0) {
         await set(gameStatusRef, { status: 'starting', round: 1 });
