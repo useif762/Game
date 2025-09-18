@@ -89,8 +89,7 @@ startTournamentBtn.addEventListener('click', async () => {
 
     if (playerCount > 0) {
         await set(gameStatusRef, { status: 'starting', round: 1 });
-        startTournamentBtn.disabled = true;
-        resetGameBtn.disabled = false;
+        // تم حذف السطر `startTournamentBtn.disabled = true;` لأن حالة الزرار يتم التحكم فيها عبر `onValue`
         alert('تم إرسال إشارة بدء البطولة إلى اللاعبين.');
     } else {
         alert('لا يوجد لاعبون في قائمة الانتظار.');
@@ -100,15 +99,11 @@ startTournamentBtn.addEventListener('click', async () => {
 // زر "إعادة تعيين اللعبة"
 resetGameBtn.addEventListener('click', async () => {
     if (confirm('هل أنت متأكد من إعادة تعيين اللعبة بالكامل؟ سيتم حذف جميع اللاعبين ونتائجهم.')) {
-        startTournamentBtn.disabled = true;
-        resetGameBtn.disabled = false;
         // حذف جميع بيانات اللاعبين في Firebase
         await set(playersRef, null);
         await set(matchmakingQueueRef, null);
         // إعادة حالة اللعبة إلى وضع الانتظار
         await set(gameStatusRef, { status: 'waiting', round: 0 });
-        startTournamentBtn.disabled = false;
-        resetGameBtn.disabled = false;
         alert('تم إعادة تعيين اللعبة بنجاح.');
     }
 });
@@ -129,14 +124,17 @@ document.addEventListener('click', async (e) => {
     }
 });
 
-// مراقبة حالة اللعبة لتحديث زر البدء
+// ----------------------------------------------------
+// 4. تحسين التحكم في حالة الأزرار
+// ----------------------------------------------------
+// مراقبة حالة اللعبة لتحديث زر البدء وإعادة التعيين تلقائياً
 onValue(gameStatusRef, (snapshot) => {
     const status = snapshot.val() || { status: 'waiting' };
     if (status.status === 'starting') {
-        startTournamentBtn.disabled = true;
-        resetGameBtn.disabled = false;
+        startTournamentBtn.disabled = true; // يتم تعطيل زر "ابدأ" عند بدء البطولة
+        resetGameBtn.disabled = false; // يتم تفعيل زر "إعادة التعيين" أثناء البطولة
     } else {
-        startTournamentBtn.disabled = false;
-        resetGameBtn.disabled = false;
+        startTournamentBtn.disabled = false; // يتم تفعيل زر "ابدأ" عندما لا تكون البطولة شغالة
+        resetGameBtn.disabled = true; // يتم تعطيل زر "إعادة التعيين" عندما لا تكون البطولة شغالة
     }
 });
