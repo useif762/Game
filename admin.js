@@ -21,7 +21,6 @@ const startTournamentBtn = document.getElementById('startTournamentBtn');
 const resetGameBtn = document.getElementById('resetGameBtn');
 const waitingCountDisplay = document.getElementById('waitingCount');
 const playingCountDisplay = document.getElementById('playingCount');
-const waitingPlayersList = document.getElementById('waitingPlayersList');
 const liveLeaderboardTableBody = document.querySelector('#liveLeaderboardTable tbody');
 const playersUl = document.getElementById('players-ul');
 
@@ -145,4 +144,4 @@ function listenForPlayerDeletions() {
             }
         }
     });
-}
+                                      }
